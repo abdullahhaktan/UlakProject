@@ -18,6 +18,15 @@ imzalatarak topluyor. Bu kayıtlar kayboluyor, aranamıyor ve müşteriye "tesli
 - **Operasyon web paneli (ASP.NET Core MVC):** teslimatları oluşturur, sürücüye atar, kanıtları görüntüler,
   PDF/Excel olarak indirir.
 
+## Ekran görüntüleri
+
+<!-- Görselleri docs/screenshots/ altına ekleyip aşağıdaki yorumu açın:
+| Panel | Kanıt detayı | Sürücü uygulaması |
+|---|---|---|
+| ![](docs/screenshots/panel.png) | ![](docs/screenshots/proof.png) | ![](docs/screenshots/mobile.png) |
+-->
+_Panel çalışırken: `docker compose up` → http://localhost:8081_
+
 **Ölçülebilir hedef:** kanıtın merkeze ulaşma süresi saatlerden saniyelere insin; kayıtlar sipariş numarasıyla
 aranabilir olsun.
 
