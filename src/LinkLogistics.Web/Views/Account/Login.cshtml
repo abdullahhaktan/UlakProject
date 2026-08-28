@@ -1,0 +1,45 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = L["Login_Title"].Value;
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">@L["Login_Title"]</h1>
+                <p class="text-muted small">@L["Login_Subtitle"]</p>
+
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-danger py-2">
+                        @(Model.Error == "OpsOnly" ? L["Login_OpsOnly"] : L["Login_Invalid"])
+                    </div>
+                }
+
+                <form asp-action="Login" method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label">@L["Login_Phone"]</label>
+                        <input asp-for="Phone" class="form-control" autocomplete="username" placeholder="+9055..." />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">@L["Login_Password"]</label>
+                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">@L["Login_Submit"]</button>
+                </form>
+
+                <hr />
+                <p class="text-muted small mb-0">@L["Login_DemoHint"]<br /><code>+905550001122 / Ops12345!</code></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

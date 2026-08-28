@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LinkLogistics.Mobile.Views.DeliveryDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:LinkLogistics.Mobile.ViewModels"
+    x:DataType="vm:DeliveryDetailViewModel"
+    Title="Teslimat">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <VerticalStackLayout Spacing="8" IsVisible="{Binding Delivery, Converter={StaticResource IsNotNullConverter}}">
+
+                <Label Text="{Binding Delivery.OrderRef}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{Binding Delivery.Status}" FontAttributes="Bold"
+                       TextColor="{Binding Delivery.Status, Converter={StaticResource StatusColorConverter}}" />
+
+                <BoxView HeightRequest="1" Color="LightGray" Margin="0,4" />
+
+                <Label Text="Alıcı" FontSize="12" TextColor="Gray" />
+                <Label Text="{Binding Delivery.RecipientName}" />
+
+                <Label Text="Telefon" FontSize="12" TextColor="Gray" />
+                <Label Text="{Binding Delivery.RecipientPhone}" />
+
+                <Label Text="Adres" FontSize="12" TextColor="Gray" />
+                <Label Text="{Binding Delivery.AddressText}" />
+
+                <Label Text="Not" FontSize="12" TextColor="Gray"
+                       IsVisible="{Binding Delivery.Note, Converter={StaticResource IsNotNullConverter}}" />
+                <Label Text="{Binding Delivery.Note}"
+                       IsVisible="{Binding Delivery.Note, Converter={StaticResource IsNotNullConverter}}" />
+
+                <BoxView HeightRequest="1" Color="LightGray" Margin="0,4" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Grid.Column="0" Text="Ara" Command="{Binding CallRecipientCommand}" />
+                    <Button Grid.Column="1" Text="Haritada aç" Command="{Binding OpenMapCommand}" />
+                </Grid>
+
+                <Button Text="Teslimat kanıtı oluştur"
+                        Command="{Binding CaptureProofCommand}"
+                        BackgroundColor="#0D6EFD" TextColor="White"
+                        Margin="0,8,0,0" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

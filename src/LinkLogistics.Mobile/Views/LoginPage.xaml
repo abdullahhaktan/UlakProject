@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LinkLogistics.Mobile.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:LinkLogistics.Mobile.ViewModels"
+    x:DataType="vm:LoginViewModel"
+    Title="Giriş"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16" VerticalOptions="Center">
+
+            <Label Text="LinkLogistics" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="Sürücü uygulaması" FontSize="16" TextColor="Gray" HorizontalOptions="Center" Margin="0,0,0,12" />
+
+            <Border Stroke="Transparent" Padding="16" BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2A2A2A}">
+                <VerticalStackLayout Spacing="12">
+
+                    <Entry Placeholder="Telefon (+9055...)" Keyboard="Telephone" Text="{Binding Phone}" />
+                    <Entry Placeholder="Şifre" IsPassword="True" Text="{Binding Password}" />
+
+                    <Label Text="API adresi" FontSize="12" TextColor="Gray" />
+                    <Entry Placeholder="http://10.0.2.2:8080" Text="{Binding ApiBaseUrl}" FontSize="12" />
+
+                    <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="13"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}" />
+
+                    <Button Text="Giriş yap"
+                            Command="{Binding SignInCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" />
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Demo: +905551112233 / Driver123!" FontSize="12" TextColor="Gray" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

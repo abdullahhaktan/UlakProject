@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-test:
+    name: Build & test (backend + web)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore LinkLogistics.Backend.slnf
+
+      - name: Build
+        run: dotnet build LinkLogistics.Backend.slnf -c Release --no-restore
+
+      # Testcontainers spins a real SQL Server; Docker is available on ubuntu runners.
+      - name: Test (unit + integration)
+        run: dotnet test LinkLogistics.Backend.slnf -c Release --no-build --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/test-results.trx'
+
+  docker:
+    name: docker compose build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images
+        run: |
+          cp .env.example .env
+          docker compose build
+
+  android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+
+      - name: Build APK
+        run: >-
+          dotnet build src/LinkLogistics.Mobile/LinkLogistics.Mobile.csproj
+          -f net8.0-android -c Release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: driver-app
+          path: 'src/LinkLogistics.Mobile/bin/Release/net8.0-android/*-Signed.apk'

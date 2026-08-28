@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = L["Nav_Proofs"].Value;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">@L["Proofs_Title"]</h1>
+    <a class="btn btn-outline-success" id="btn-export">@L["Proofs_ExportExcel"]</a>
+</div>
+
+<div class="card mb-3"><div class="card-body">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">@L["Common_Search"]</label>
+            <input type="text" id="f-search" class="form-control form-control-sm" placeholder="@L["Proofs_SearchHint"]" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">@L["Common_Status"]</label>
+            <select id="f-status" class="form-select form-select-sm">
+                <option value="">@L["Common_All"]</option>
+                <option value="Delivered">@L["Status_Delivered"]</option>
+                <option value="Failed">@L["Status_Failed"]</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">@L["Common_Driver"]</label>
+            <select id="f-driver" class="form-select form-select-sm"><option value="">@L["Common_All"]</option></select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">@L["Common_From"]</label>
+            <input type="date" id="f-from" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small">@L["Common_To"]</label>
+            <input type="date" id="f-to" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-sm btn-outline-secondary w-100" id="btn-filter">@L["Common_Apply"]</button>
+        </div>
+    </div>
+</div></div>
+
+<div id="grid"></div>
+
+@section Scripts {
+    <script>
+        function filters() {
+            return {
+                search: $("#f-search").val() || null,
+                status: $("#f-status").val() || null,
+                driverId: $("#f-driver").val() || null,
+                from: $("#f-from").val() || null,
+                to: $("#f-to").val() || null
+            };
+        }
+
+        const store = new DevExpress.data.CustomStore({
+            key: "id",
+            load(opts) {
+                const sort = (opts.sort && opts.sort[0]) || { selector: "capturedAtUtc", desc: true };
+                return $.getJSON("@Url.Action("Data", "Proofs")", $.extend(filters(), {
+                    skip: opts.skip || 0, take: opts.take || 20,
+                    sort: sort.selector, desc: !!sort.desc
+                })).then(r => ({ data: r.data, totalCount: r.totalCount }));
+            }
+        });
+
+        const grid = $("#grid").dxDataGrid({
+            dataSource: store,
+            remoteOperations: { paging: true, sorting: true },
+            columnAutoWidth: true, showBorders: true, hoverStateEnabled: true,
+            paging: { pageSize: 20 }, pager: { visible: true, showInfo: true, showNavigationButtons: true },
+            onRowClick(e) { if (e.rowType === "data") window.location = "@Url.Action("Detail", "Proofs")/" + e.data.id; },
+            columns: [
+                { dataField: "orderRef", caption: "@L["Delivery_OrderRef"]" },
+                { dataField: "recipientName", caption: "@L["Delivery_Recipient"]" },
+                { dataField: "status", caption: "@L["Common_Status"]", width: 110,
+                  cellTemplate(c, o) {
+                      const cls = o.value === "Delivered" ? "success" : "danger";
+                      c.append(`<span class="badge text-bg-${cls}">${o.value}</span>`);
+                  } },
+                { dataField: "failureReason", caption: "@L["Proof_FailureReason"]" },
+                { dataField: "driverName", caption: "@L["Common_Driver"]" },
+                { dataField: "photoCount", caption: "@L["Proof_Photos"]", width: 80, alignment: "center" },
+                { dataField: "capturedAtUtc", caption: "@L["Proof_CapturedAt"]", dataType: "datetime", width: 160 },
+                { dataField: "syncedAtUtc", caption: "@L["Proof_SyncedAt"]", dataType: "datetime", width: 160 }
+            ]
+        }).dxDataGrid("instance");
+
+        $("#btn-filter").on("click", () => grid.refresh());
+        $("#f-search").on("keydown", e => { if (e.key === "Enter") grid.refresh(); });
+        $("#btn-export").on("click", () => {
+            const q = $.param(Object.fromEntries(Object.entries(filters()).filter(([, v]) => v)));
+            window.location = "@Url.Action("Export", "Proofs")" + (q ? "?" + q : "");
+        });
+
+        $.getJSON("@Url.Action("Drivers", "Proofs")").done(list => {
+            $("#f-driver").append(list.map(d => `<option value="${d.id}">${d.name}</option>`).join(""));
+        });
+    </script>
+}

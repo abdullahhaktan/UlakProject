@@ -1,0 +1,64 @@
+@using LinkLogistics.Shared.Admin
+@model DashboardSummaryDto
+@{
+    ViewData["Title"] = L["Nav_Dashboard"].Value;
+}
+
+<h1 class="h3 mb-4">@L["Dashboard_Title"]</h1>
+
+@if (Model is null)
+{
+    <div class="alert alert-warning">@L["Common_ApiUnavailable"]</div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card text-bg-light"><div class="card-body">
+                <div class="text-muted small">@L["Dashboard_Pending"]</div>
+                <div class="display-6">@Model.PendingCount</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-bg-light"><div class="card-body">
+                <div class="text-muted small">@L["Dashboard_Delivered"]</div>
+                <div class="display-6 text-success">@Model.DeliveredCount</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-bg-light"><div class="card-body">
+                <div class="text-muted small">@L["Dashboard_Failed"]</div>
+                <div class="display-6 text-danger">@Model.FailedCount</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card text-bg-light"><div class="card-body">
+                <div class="text-muted small">@L["Dashboard_Unassigned"]</div>
+                <div class="display-6 text-warning">@Model.UnassignedCount</div>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">@L["Dashboard_Last7Days"]</div>
+        <div class="card-body">
+            <div id="trend-chart" style="height: 320px;"></div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            const trendData = @Html.Raw(Json.Serialize(Model.Last7Days));
+            $("#trend-chart").dxChart({
+                dataSource: trendData,
+                commonSeriesSettings: { argumentField: "day", type: "bar" },
+                series: [
+                    { valueField: "delivered", name: "@L["Dashboard_Delivered"]", color: "#198754" },
+                    { valueField: "failed", name: "@L["Dashboard_Failed"]", color: "#dc3545" }
+                ],
+                legend: { verticalAlignment: "bottom", horizontalAlignment: "center" },
+                tooltip: { enabled: true }
+            });
+        </script>
+    }
+}

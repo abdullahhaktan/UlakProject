@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5BC831E4-B226-4854-BB18-1F1105EA360A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Core", "src\LinkLogistics.Core\LinkLogistics.Core.csproj", "{DE6CAD9A-4763-4979-BCB4-F09B96BA7164}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Infrastructure", "src\LinkLogistics.Infrastructure\LinkLogistics.Infrastructure.csproj", "{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Api", "src\LinkLogistics.Api\LinkLogistics.Api.csproj", "{981DF2B6-8462-4DEB-B186-0513287CCE46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Web", "src\LinkLogistics.Web\LinkLogistics.Web.csproj", "{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.DbMigrator", "src\LinkLogistics.DbMigrator\LinkLogistics.DbMigrator.csproj", "{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{148B0717-E284-4697-8D2D-C499CDE79461}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.UnitTests", "tests\LinkLogistics.UnitTests\LinkLogistics.UnitTests.csproj", "{B5726167-0C2C-4E38-BE1F-F99BE7F7C993}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.IntegrationTests", "tests\LinkLogistics.IntegrationTests\LinkLogistics.IntegrationTests.csproj", "{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Shared", "src\LinkLogistics.Shared\LinkLogistics.Shared.csproj", "{3578BC59-5FE8-4DA8-9A7E-26892495C089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkLogistics.Mobile", "src\LinkLogistics.Mobile\LinkLogistics.Mobile.csproj", "{4A607CAC-E7A4-4C5B-83BA-72425B68A34F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE6CAD9A-4763-4979-BCB4-F09B96BA7164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6CAD9A-4763-4979-BCB4-F09B96BA7164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6CAD9A-4763-4979-BCB4-F09B96BA7164}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6CAD9A-4763-4979-BCB4-F09B96BA7164}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981DF2B6-8462-4DEB-B186-0513287CCE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{981DF2B6-8462-4DEB-B186-0513287CCE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{981DF2B6-8462-4DEB-B186-0513287CCE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{981DF2B6-8462-4DEB-B186-0513287CCE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5726167-0C2C-4E38-BE1F-F99BE7F7C993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5726167-0C2C-4E38-BE1F-F99BE7F7C993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5726167-0C2C-4E38-BE1F-F99BE7F7C993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5726167-0C2C-4E38-BE1F-F99BE7F7C993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3578BC59-5FE8-4DA8-9A7E-26892495C089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3578BC59-5FE8-4DA8-9A7E-26892495C089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3578BC59-5FE8-4DA8-9A7E-26892495C089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3578BC59-5FE8-4DA8-9A7E-26892495C089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A607CAC-E7A4-4C5B-83BA-72425B68A34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A607CAC-E7A4-4C5B-83BA-72425B68A34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A607CAC-E7A4-4C5B-83BA-72425B68A34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A607CAC-E7A4-4C5B-83BA-72425B68A34F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE6CAD9A-4763-4979-BCB4-F09B96BA7164} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{FAA3E3B5-B8FE-4CEA-B6C7-96B363AAD6FD} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{981DF2B6-8462-4DEB-B186-0513287CCE46} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{C229D78B-968F-43CC-8D8D-4D0A3FAB0B03} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{1C25B901-AF3C-4F30-A71F-E7EBB4EFE95C} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{B5726167-0C2C-4E38-BE1F-F99BE7F7C993} = {148B0717-E284-4697-8D2D-C499CDE79461}
+		{ED3D8CB3-CBF3-49D1-8E42-E6EB7169F150} = {148B0717-E284-4697-8D2D-C499CDE79461}
+		{3578BC59-5FE8-4DA8-9A7E-26892495C089} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+		{4A607CAC-E7A4-4C5B-83BA-72425B68A34F} = {5BC831E4-B226-4854-BB18-1F1105EA360A}
+	EndGlobalSection
+EndGlobal

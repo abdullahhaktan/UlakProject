@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav_Dashboard"><value>Panel</value></data>
+  <data name="Nav_Deliveries"><value>Teslimatlar</value></data>
+  <data name="Nav_Proofs"><value>Teslimat Kanıtları</value></data>
+  <data name="Nav_Logout"><value>Çıkış</value></data>
+
+  <data name="Login_Title"><value>Operasyon paneli girişi</value></data>
+  <data name="Login_Subtitle"><value>Operasyon hesabınızla giriş yapın.</value></data>
+  <data name="Login_OpsOnly"><value>Bu panel yalnızca operasyon kullanıcıları içindir.</value></data>
+  <data name="Login_Invalid"><value>Telefon veya şifre hatalı.</value></data>
+  <data name="Login_Phone"><value>Telefon</value></data>
+  <data name="Login_Password"><value>Şifre</value></data>
+  <data name="Login_Submit"><value>Giriş yap</value></data>
+  <data name="Login_DemoHint"><value>Demo hesabı:</value></data>
+
+  <data name="Dashboard_Title"><value>Genel bakış</value></data>
+  <data name="Dashboard_Pending"><value>Bekleyen</value></data>
+  <data name="Dashboard_Delivered"><value>Teslim edildi</value></data>
+  <data name="Dashboard_Failed"><value>Teslim edilemedi</value></data>
+  <data name="Dashboard_Unassigned"><value>Atanmamış</value></data>
+  <data name="Dashboard_Last7Days"><value>Kanıtlar — son 7 gün</value></data>
+
+  <data name="Deliveries_Title"><value>Teslimatlar</value></data>
+  <data name="Deliveries_New"><value>Yeni teslimat</value></data>
+  <data name="Deliveries_SearchHint"><value>sipariş no veya alıcı</value></data>
+  <data name="Deliveries_Assign"><value>Sürücü ata</value></data>
+  <data name="Deliveries_Assigned"><value>Sürücü atandı</value></data>
+
+  <data name="Delivery_OrderRef"><value>Sipariş No</value></data>
+  <data name="Delivery_Recipient"><value>Alıcı</value></data>
+  <data name="Delivery_Phone"><value>Telefon</value></data>
+  <data name="Delivery_Address"><value>Adres</value></data>
+  <data name="Delivery_Note"><value>Not</value></data>
+  <data name="Delivery_HasProof"><value>Kanıt</value></data>
+
+  <data name="Proofs_Title"><value>Teslimat kanıtları</value></data>
+  <data name="Proofs_ExportExcel"><value>Excel'e aktar</value></data>
+  <data name="Proofs_SearchHint"><value>sipariş no</value></data>
+
+  <data name="Proof_Title"><value>Kanıt</value></data>
+  <data name="Proof_DownloadPdf"><value>PDF indir</value></data>
+  <data name="Proof_DeliveryInfo"><value>Teslimat bilgileri</value></data>
+  <data name="Proof_SignedBy"><value>İmzalayan</value></data>
+  <data name="Proof_FailureReason"><value>Başarısızlık nedeni</value></data>
+  <data name="Proof_CapturedAt"><value>Kayıt zamanı</value></data>
+  <data name="Proof_SyncedAt"><value>Senkron zamanı</value></data>
+  <data name="Proof_OpenMap"><value>haritada aç</value></data>
+  <data name="Proof_Signature"><value>İmza</value></data>
+  <data name="Proof_Photos"><value>Fotoğraflar</value></data>
+  <data name="Proof_NoPhotos"><value>Fotoğraf yok.</value></data>
+  <data name="Proof_Location"><value>Konum</value></data>
+
+  <data name="Status_Pending"><value>Bekliyor</value></data>
+  <data name="Status_Delivered"><value>Teslim edildi</value></data>
+  <data name="Status_Failed"><value>Teslim edilemedi</value></data>
+
+  <data name="Common_Search"><value>Ara</value></data>
+  <data name="Common_Status"><value>Durum</value></data>
+  <data name="Common_Driver"><value>Sürücü</value></data>
+  <data name="Common_All"><value>Tümü</value></data>
+  <data name="Common_Apply"><value>Uygula</value></data>
+  <data name="Common_Cancel"><value>Vazgeç</value></data>
+  <data name="Common_Save"><value>Kaydet</value></data>
+  <data name="Common_Saved"><value>Kaydedildi</value></data>
+  <data name="Common_Back"><value>Geri</value></data>
+  <data name="Common_From"><value>Başlangıç</value></data>
+  <data name="Common_To"><value>Bitiş</value></data>
+  <data name="Common_CreatedAt"><value>Oluşturulma</value></data>
+  <data name="Common_ApiUnavailable"><value>API şu anda erişilemez durumda.</value></data>
+</root>

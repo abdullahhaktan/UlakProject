@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav_Dashboard"><value>Dashboard</value></data>
+  <data name="Nav_Deliveries"><value>Deliveries</value></data>
+  <data name="Nav_Proofs"><value>Proofs</value></data>
+  <data name="Nav_Logout"><value>Sign out</value></data>
+
+  <data name="Login_Title"><value>Ops panel sign in</value></data>
+  <data name="Login_Subtitle"><value>Sign in with your operations account.</value></data>
+  <data name="Login_OpsOnly"><value>This panel is for operations users only.</value></data>
+  <data name="Login_Invalid"><value>Invalid phone or password.</value></data>
+  <data name="Login_Phone"><value>Phone</value></data>
+  <data name="Login_Password"><value>Password</value></data>
+  <data name="Login_Submit"><value>Sign in</value></data>
+  <data name="Login_DemoHint"><value>Demo account:</value></data>
+
+  <data name="Dashboard_Title"><value>Overview</value></data>
+  <data name="Dashboard_Pending"><value>Pending</value></data>
+  <data name="Dashboard_Delivered"><value>Delivered</value></data>
+  <data name="Dashboard_Failed"><value>Failed</value></data>
+  <data name="Dashboard_Unassigned"><value>Unassigned</value></data>
+  <data name="Dashboard_Last7Days"><value>Proofs — last 7 days</value></data>
+
+  <data name="Deliveries_Title"><value>Deliveries</value></data>
+  <data name="Deliveries_New"><value>New delivery</value></data>
+  <data name="Deliveries_SearchHint"><value>order ref or recipient</value></data>
+  <data name="Deliveries_Assign"><value>Assign driver</value></data>
+  <data name="Deliveries_Assigned"><value>Driver assigned</value></data>
+
+  <data name="Delivery_OrderRef"><value>Order ref</value></data>
+  <data name="Delivery_Recipient"><value>Recipient</value></data>
+  <data name="Delivery_Phone"><value>Phone</value></data>
+  <data name="Delivery_Address"><value>Address</value></data>
+  <data name="Delivery_Note"><value>Note</value></data>
+  <data name="Delivery_HasProof"><value>Proof</value></data>
+
+  <data name="Proofs_Title"><value>Proofs of delivery</value></data>
+  <data name="Proofs_ExportExcel"><value>Export Excel</value></data>
+  <data name="Proofs_SearchHint"><value>order ref</value></data>
+
+  <data name="Proof_Title"><value>Proof</value></data>
+  <data name="Proof_DownloadPdf"><value>Download PDF</value></data>
+  <data name="Proof_DeliveryInfo"><value>Delivery information</value></data>
+  <data name="Proof_SignedBy"><value>Signed by</value></data>
+  <data name="Proof_FailureReason"><value>Failure reason</value></data>
+  <data name="Proof_CapturedAt"><value>Captured at</value></data>
+  <data name="Proof_SyncedAt"><value>Synced at</value></data>
+  <data name="Proof_OpenMap"><value>open map</value></data>
+  <data name="Proof_Signature"><value>Signature</value></data>
+  <data name="Proof_Photos"><value>Photos</value></data>
+  <data name="Proof_NoPhotos"><value>No photos.</value></data>
+  <data name="Proof_Location"><value>Location</value></data>
+
+  <data name="Status_Pending"><value>Pending</value></data>
+  <data name="Status_Delivered"><value>Delivered</value></data>
+  <data name="Status_Failed"><value>Failed</value></data>
+
+  <data name="Common_Search"><value>Search</value></data>
+  <data name="Common_Status"><value>Status</value></data>
+  <data name="Common_Driver"><value>Driver</value></data>
+  <data name="Common_All"><value>All</value></data>
+  <data name="Common_Apply"><value>Apply</value></data>
+  <data name="Common_Cancel"><value>Cancel</value></data>
+  <data name="Common_Save"><value>Save</value></data>
+  <data name="Common_Saved"><value>Saved</value></data>
+  <data name="Common_Back"><value>Back</value></data>
+  <data name="Common_From"><value>From</value></data>
+  <data name="Common_To"><value>To</value></data>
+  <data name="Common_CreatedAt"><value>Created at</value></data>
+  <data name="Common_ApiUnavailable"><value>The API is unavailable right now.</value></data>
+</root>

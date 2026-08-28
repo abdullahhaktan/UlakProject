@@ -1,0 +1,39 @@
+# .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+.vs/
+artifacts/
+publish/
+TestResults/
+*.trx
+coverage*.xml
+coverage*.json
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# npm (client libs are vendored into wwwroot/lib, not built)
+node_modules/
+package-lock.json
+src/LinkLogistics.Web/package.json
+
+# MAUI / Android
+*.keystore
+!link-logistics-debug.keystore
+src/LinkLogistics.Mobile/Platforms/Android/**/bin/
+*.apk
+*.aab
+
+# Local config / secrets
+.env
+appsettings.*.Local.json
+*.Development.json.local
+
+# OS
+.DS_Store
+Thumbs.db
