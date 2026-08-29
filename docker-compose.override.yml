@@ -1,0 +1,9 @@
+# VPS deployment overrides (not for local dev)
+services:
+  sqlserver:
+    ports: !override
+      - "127.0.0.1:1433:1433"
+  minio:
+    ports: !override
+      - "9100:9000"
+      - "127.0.0.1:9101:9001"
