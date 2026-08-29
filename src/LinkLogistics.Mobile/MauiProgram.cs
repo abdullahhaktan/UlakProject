@@ -18,9 +18,9 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-#if DEBUG
+        // AddDebug surfaces ILogger output in logcat on Android, in Release too —
+        // the offline-sync path is hard to diagnose on a device without it.
         builder.Logging.AddDebug();
-#endif
 
         // --- platform services ---
         builder.Services.AddSingleton(Connectivity.Current);

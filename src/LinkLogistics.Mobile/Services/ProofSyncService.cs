@@ -87,9 +87,21 @@ public sealed class ProofSyncService
         }
     }
 
-    public async Task RunOnceAsync()
+    /// <summary>
+    /// Driver-triggered "send now": re-arms failed proofs and drains the queue
+    /// even if <see cref="IConnectivity"/> is unsure about the network (its report
+    /// is unreliable on some devices/emulators, and the driver just asked).
+    /// </summary>
+    public async Task RetryAllAsync()
     {
-        if (_connectivity.NetworkAccess != NetworkAccess.Internet)
+        await _db.RetryFailedAsync();
+        _queue.NotifyChanged();
+        await RunOnceAsync(force: true);
+    }
+
+    public async Task RunOnceAsync(bool force = false)
+    {
+        if (!force && _connectivity.NetworkAccess != NetworkAccess.Internet)
         {
             return;
         }
@@ -102,6 +114,7 @@ public sealed class ProofSyncService
         try
         {
             var due = await _db.GetDueAsync(DateTimeOffset.UtcNow);
+            _logger.LogInformation("Queue drain: {Count} proof(s) due (force={Force})", due.Count, force);
             foreach (var proof in due)
             {
                 await ProcessAsync(proof);

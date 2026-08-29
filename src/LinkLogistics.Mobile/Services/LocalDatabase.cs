@@ -26,10 +26,15 @@ public sealed class LocalDatabase
             {
                 Directory.CreateDirectory(FilesDirectory);
                 var path = Path.Combine(FileSystem.AppDataDirectory, "linklogistics.db3");
-                _connection = new SQLiteAsyncConnection(path,
+                var connection = new SQLiteAsyncConnection(path,
                     SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
-                await _connection.CreateTableAsync<PendingProof>();
-                await _connection.CreateTableAsync<PendingPhoto>();
+                await connection.CreateTableAsync<PendingProof>();
+                await connection.CreateTableAsync<PendingPhoto>();
+
+                // Publish the connection only once every table exists. Assigning
+                // _connection earlier lets a concurrent caller (the sync loop)
+                // take it via the fast path above and hit "no such table".
+                _connection = connection;
             }
         }
         finally
@@ -93,6 +98,27 @@ public sealed class LocalDatabase
     {
         var db = await GetConnectionAsync();
         return await db.Table<PendingProof>().Where(p => p.State == state).CountAsync();
+    }
+
+    /// <summary>
+    /// Re-arms every <see cref="SyncState.Failed"/> proof for another sync pass:
+    /// back to Pending, attempts cleared, due now. Used by the manual "send now"
+    /// action so a driver can retry uploads that exhausted their automatic retries.
+    /// </summary>
+    public async Task<int> RetryFailedAsync()
+    {
+        var db = await GetConnectionAsync();
+        var failed = await db.Table<PendingProof>().Where(p => p.State == SyncState.Failed).ToListAsync();
+        foreach (var proof in failed)
+        {
+            proof.State = SyncState.Pending;
+            proof.Attempts = 0;
+            proof.LastError = null;
+            proof.NextAttemptUtc = DateTimeOffset.UtcNow;
+            await db.UpdateAsync(proof);
+        }
+
+        return failed.Count;
     }
 
     public async Task DeleteProofAsync(PendingProof proof)

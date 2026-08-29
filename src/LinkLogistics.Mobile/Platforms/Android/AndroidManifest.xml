@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- targetSdkVersion pinned to 33: MAUI 8.0.3's Connectivity receiver registration
+	     predates the Android 14 (API 34) RECEIVER_EXPORTED/NOT_EXPORTED requirement and
+	     crashes on launch under target 34. Pin until the MAUI packages are updated. -->
+	<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="33" />
+
 	<!-- usesCleartextTraffic: the dev API and MinIO are plain HTTP (10.0.2.2:8080 / :9100).
 	     A production build points at HTTPS endpoints and drops this. -->
 	<application android:allowBackup="true"
@@ -15,4 +20,28 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 	<uses-feature android:name="android.hardware.camera" android:required="false" />
+
+	<!-- Android 11+ package visibility: declare the intents Essentials fires so the
+	     camera / dialer / maps apps are resolvable (MediaPicker, PhoneDialer, Map). -->
+	<queries>
+		<intent>
+			<action android:name="android.media.action.IMAGE_CAPTURE" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.DIAL" />
+			<data android:scheme="tel" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="geo" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="http" />
+		</intent>
+		<intent>
+			<action android:name="android.intent.action.VIEW" />
+			<data android:scheme="https" />
+		</intent>
+	</queries>
 </manifest>

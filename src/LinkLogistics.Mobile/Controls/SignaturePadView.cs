@@ -31,7 +31,44 @@ public sealed class SignaturePadView : GraphicsView
                 Invalidate();
             }
         };
+
+#if ANDROID
+        // Inside a ScrollView the pad only gets a few pixels of drag before the
+        // scroll container claims the gesture. Tell every ancestor not to
+        // intercept touches while the finger is down on the pad.
+        HandlerChanged += (_, _) =>
+        {
+            if (Handler?.PlatformView is Android.Views.View native)
+            {
+                native.Touch -= OnNativeTouch;
+                native.Touch += OnNativeTouch;
+            }
+        };
+#endif
     }
+
+#if ANDROID
+    private static void OnNativeTouch(object? sender, Android.Views.View.TouchEventArgs e)
+    {
+        if (sender is Android.Views.View view)
+        {
+            switch (e.Event?.ActionMasked)
+            {
+                case Android.Views.MotionEventActions.Down:
+                case Android.Views.MotionEventActions.Move:
+                    view.Parent?.RequestDisallowInterceptTouchEvent(true);
+                    break;
+                case Android.Views.MotionEventActions.Up:
+                case Android.Views.MotionEventActions.Cancel:
+                    view.Parent?.RequestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+        }
+
+        // Let the GraphicsView keep handling the touch for drawing.
+        e.Handled = false;
+    }
+#endif
 
     public bool HasContent => _strokes.Any(s => s.Count > 1);
 

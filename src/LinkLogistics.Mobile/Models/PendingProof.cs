@@ -21,7 +21,10 @@ public sealed class PendingProof
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
 
-    [Indexed, Unique]
+    // [Unique] already creates a unique index; pairing it with [Indexed] makes
+    // sqlite-net build two conflicting index defs for the column ("All the columns
+    // in an index must have the same value for their Unique property" under AOT).
+    [Unique]
     public Guid ClientUuid { get; set; }
 
     public int DeliveryId { get; set; }

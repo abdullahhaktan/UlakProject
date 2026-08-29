@@ -84,7 +84,7 @@ public sealed partial class DeliveryListViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task SyncNowAsync() => _sync.RunOnceAsync();
+    private Task SyncNowAsync() => _sync.RetryAllAsync();
 
     [RelayCommand]
     private async Task OpenDeliveryAsync(DeliveryListItem? delivery)

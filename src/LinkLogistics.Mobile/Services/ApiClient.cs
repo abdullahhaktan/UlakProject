@@ -62,12 +62,18 @@ public sealed class ApiClient
 
     public async Task UploadAsync(string uploadUrl, Stream content, string contentType, CancellationToken ct)
     {
+        // A presigned S3/MinIO URL carries its own auth in the query string.
+        // Sending it through _http would add the API's "Authorization: Bearer"
+        // header too, and MinIO rejects requests that mix both auth mechanisms.
+        using var plain = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
         using var streamContent = new StreamContent(content);
         streamContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-        using var response = await _http.PutAsync(uploadUrl, streamContent, ct);
+        using var response = await plain.PutAsync(uploadUrl, streamContent, ct);
         if (!response.IsSuccessStatusCode)
         {
-            throw new ApiException((int)response.StatusCode, $"Dosya yüklenemedi ({(int)response.StatusCode}).");
+            var body = await response.Content.ReadAsStringAsync(ct);
+            throw new ApiException((int)response.StatusCode,
+                $"Dosya yüklenemedi ({(int)response.StatusCode}). {body}".Trim());
         }
     }
 
