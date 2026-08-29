@@ -2,6 +2,24 @@
 
 _Son güncelleme: 2026-08-29_
 
+## ⚡ Proje VPS'e taşındı (2026-08-29)
+
+Artık geliştirme + deploy **Cloud VPS** üzerinde: `ssh hub-vps` → `cd /srv/linklogistics`.
+- Repo git bundle ile taşındı (main @ `2a23cb2`), GitHub remote yok.
+- `.env` sunucuda güçlü secret'larla yeniden üretildi (dev değerleri değil).
+- `docker compose up -d` çalışıyor. Public: api `185.187.169.151:8080`, ops panel `:8081`,
+  MinIO API `:9100`. sqlserver `1433` + MinIO console `9101` sadece localhost (SSH tünel gerekir).
+- `docker-compose.override.yml` = VPS binding'leri (lokal dev'de kullanılmaz).
+- Redeploy: `cd /srv/linklogistics && git pull && docker compose up -d --build`
+  sonra `sudo ufw-docker allow linklogistics-api-1 8080` (+ web 8080, minio 9000) tekrar çalıştır.
+- Claude Code sunucuda kurulu (`claude`).
+- Detay: `~/.claude/.../memory/hub-vps.md`.
+
+Windows'taki lokal Docker stack hâlâ ayakta olabilir — artık gerekmiyor,
+`cd logistic && docker compose down` ile kapatılabilir.
+
+---
+
 Bu dosya "nerede kaldık, servisler nasıl çalışıyor" özetidir. Detaylı build
 geçmişi için `~/.claude/.../memory/link-logistics-build-progress.md` ve cihaz
 testi notları için `link-logistics-maui-testing.md`.
