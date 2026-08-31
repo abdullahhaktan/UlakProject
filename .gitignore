@@ -20,12 +20,12 @@ coverage*.json
 # npm (client libs are vendored into wwwroot/lib, not built)
 node_modules/
 package-lock.json
-src/LinkLogistics.Web/package.json
+src/Ulak.Web/package.json
 
 # MAUI / Android
 *.keystore
 !link-logistics-debug.keystore
-src/LinkLogistics.Mobile/Platforms/Android/**/bin/
+src/Ulak.Mobile/Platforms/Android/**/bin/
 *.apk
 *.aab
 

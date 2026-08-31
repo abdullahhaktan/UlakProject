@@ -16,10 +16,10 @@ GO
 
 DECLARE @companyId INT;
 
-IF NOT EXISTS (SELECT 1 FROM dbo.Company WHERE Name = N'Link Lojistik Demo')
-    INSERT dbo.Company (Name) VALUES (N'Link Lojistik Demo');
+IF NOT EXISTS (SELECT 1 FROM dbo.Company WHERE Name = N'Ulak Demo')
+    INSERT dbo.Company (Name) VALUES (N'Ulak Demo');
 
-SELECT @companyId = Id FROM dbo.Company WHERE Name = N'Link Lojistik Demo';
+SELECT @companyId = Id FROM dbo.Company WHERE Name = N'Ulak Demo';
 
 /* ---- Users ---- */
 MERGE dbo.AppUser AS tgt

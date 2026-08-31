@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "Ulak.sln",
+    "projects": [
+      "src\\Ulak.Shared\\Ulak.Shared.csproj",
+      "src\\Ulak.Core\\Ulak.Core.csproj",
+      "src\\Ulak.Infrastructure\\Ulak.Infrastructure.csproj",
+      "src\\Ulak.Api\\Ulak.Api.csproj",
+      "src\\Ulak.Web\\Ulak.Web.csproj",
+      "src\\Ulak.DbMigrator\\Ulak.DbMigrator.csproj",
+      "tests\\Ulak.UnitTests\\Ulak.UnitTests.csproj",
+      "tests\\Ulak.IntegrationTests\\Ulak.IntegrationTests.csproj"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Ulak.Mobile"
+             xmlns:conv="clr-namespace:Ulak.Mobile.Converters"
+             x:Class="Ulak.Mobile.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:IsPresentConverter x:Key="IsNotNullConverter" />
+            <conv:InvertedBoolConverter x:Key="InverseBoolConverter" />
+            <conv:StatusColorConverter x:Key="StatusColorConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

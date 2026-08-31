@@ -1,17 +1,25 @@
-# LINK Logistics — Proof of Delivery — Proje Durumu
+# Ulak — Proof of Delivery — Proje Durumu
 
-_Son güncelleme: 2026-08-29_
+_Son güncelleme: 2026-08-31_
+
+## 🔤 Yeniden adlandırma: LinkLogistics → Ulak (2026-08-31)
+
+Proje adı **Ulak** oldu (Osmanlı'da atlı kurye). `rename/ulak` dalında: tüm namespace/proje/dizin,
+`Ulak.sln` / `Ulak.Backend.slnf`, docker-compose `name: ulak`, DB `Ulak`, bundle id `com.ulak.driver`.
+Backend + mobil temiz derleniyor, 22/22 unit test geçiyor.
+**Bekleyen:** dalı push + main'e merge; GitHub repo adı `LinkLogisticProject` → `ulak`;
+VPS'i yeni adla yeniden deploy (dizin hâlâ `/srv/linklogistics`); APK'yı yeniden derle + kur.
 
 ## ⚡ Proje VPS'e taşındı (2026-08-29)
 
-Artık geliştirme + deploy **Cloud VPS** üzerinde: `ssh hub-vps` → `cd /srv/linklogistics`.
+Artık geliştirme + deploy **Cloud VPS** üzerinde: `ssh hub-vps` → `cd /srv/ulak`.
 - Repo git bundle ile taşındı (main @ `2a23cb2`), GitHub remote yok.
 - `.env` sunucuda güçlü secret'larla yeniden üretildi (dev değerleri değil).
 - `docker compose up -d` çalışıyor. Public: api `185.187.169.151:8080`, ops panel `:8081`,
   MinIO API `:9100`. sqlserver `1433` + MinIO console `9101` sadece localhost (SSH tünel gerekir).
 - `docker-compose.override.yml` = VPS binding'leri (lokal dev'de kullanılmaz).
-- Redeploy: `cd /srv/linklogistics && git pull && docker compose up -d --build`
-  sonra `sudo ufw-docker allow linklogistics-api-1 8080` (+ web 8080, minio 9000) tekrar çalıştır.
+- Redeploy: `cd /srv/ulak && git pull && docker compose up -d --build`
+  sonra `sudo ufw-docker allow ulak-api-1 8080` (+ web 8080, minio 9000) tekrar çalıştır.
 - Claude Code sunucuda kurulu (`claude`).
 - Detay: `~/.claude/.../memory/hub-vps.md`.
 
@@ -97,7 +105,7 @@ docker compose down                       # durdur
 |-----------|-----------|---------|
 | api       | `8080`    | REST API + Swagger (`http://localhost:8080/swagger`) |
 | web       | `8081`    | Ops paneli (`http://localhost:8081`) |
-| sqlserver | `1433`    | SQL Server 2022, DB `LinkLogistics` |
+| sqlserver | `1433`    | SQL Server 2022, DB `Ulak` |
 | minio     | `9100` (API), `9101` (console) | Obje deposu, bucket `proofs`, console `http://localhost:9101` |
 | migrator  | —         | DbUp migration, başlarken çalışıp exit 0 verir |
 
@@ -119,7 +127,7 @@ ANDROID_HOME=C:\Program Files (x86)\Android\android-sdk
 ```
 adb: `%ANDROID_HOME%\platform-tools\adb.exe`
 
-Proje: `src/LinkLogistics.Mobile`, `net8.0-android`.
+Proje: `src/Ulak.Mobile`, `net8.0-android`.
 
 Çalıştırma seçenekleri:
 - **Emülatör:** `emulator -avd pixel_7_-_api_34`, uygulama API adresi `http://10.0.2.2:8080`
@@ -149,7 +157,7 @@ adb bağlantısı ekran kilitlenince düşüyor → Developer options → "Stay 
 - `taskkill //F //IM dotnet.exe` KULLANMA — tüm dotnet süreçlerini öldürür.
 - DbMigrator .sql dosyalarını embedded resource olarak gömer → script düzenleyince
   `--no-build`'den önce rebuild şart.
-- CI Mobile'ı hariç tutar (`LinkLogistics.Backend.slnf`) çünkü ubuntu'da maui workload yok.
+- CI Mobile'ı hariç tutar (`Ulak.Backend.slnf`) çünkü ubuntu'da maui workload yok.
 
 ---
 

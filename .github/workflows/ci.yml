@@ -17,14 +17,14 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore LinkLogistics.Backend.slnf
+        run: dotnet restore Ulak.Backend.slnf
 
       - name: Build
-        run: dotnet build LinkLogistics.Backend.slnf -c Release --no-restore
+        run: dotnet build Ulak.Backend.slnf -c Release --no-restore
 
       # Testcontainers spins a real SQL Server; Docker is available on ubuntu runners.
       - name: Test (unit + integration)
-        run: dotnet test LinkLogistics.Backend.slnf -c Release --no-build --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test Ulak.Backend.slnf -c Release --no-build --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload test results
         if: always()
@@ -58,11 +58,11 @@ jobs:
 
       - name: Build APK
         run: >-
-          dotnet build src/LinkLogistics.Mobile/LinkLogistics.Mobile.csproj
+          dotnet build src/Ulak.Mobile/Ulak.Mobile.csproj
           -f net8.0-android -c Release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: driver-app
-          path: 'src/LinkLogistics.Mobile/bin/Release/net8.0-android/*-Signed.apk'
+          path: 'src/Ulak.Mobile/bin/Release/net8.0-android/*-Signed.apk'

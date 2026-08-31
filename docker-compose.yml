@@ -1,4 +1,4 @@
-# LinkLogistics — Proof of Delivery
+# Ulak — Proof of Delivery
 #   cp .env.example .env && docker compose up --build
 #
 #   web    -> http://localhost:8081   (ops panel; login +905550001122 / Ops12345!)
@@ -7,7 +7,7 @@
 #
 # The MAUI driver app is built separately (see README) and points at the API.
 
-name: linklogistics
+name: ulak
 
 services:
   sqlserver:
@@ -50,9 +50,9 @@ services:
   migrator:
     build:
       context: .
-      dockerfile: src/LinkLogistics.DbMigrator/Dockerfile
+      dockerfile: src/Ulak.DbMigrator/Dockerfile
     environment:
-      ConnectionStrings__Default: "Server=sqlserver,1433;Database=${DB_NAME:-LinkLogistics};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=${DB_NAME:-Ulak};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -61,13 +61,13 @@ services:
   api:
     build:
       context: .
-      dockerfile: src/LinkLogistics.Api/Dockerfile
+      dockerfile: src/Ulak.Api/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: "Server=sqlserver,1433;Database=${DB_NAME:-LinkLogistics};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
+      ConnectionStrings__Default: "Server=sqlserver,1433;Database=${DB_NAME:-Ulak};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;Encrypt=False"
       Jwt__SigningKey: ${JWT_SIGNING_KEY}
-      Jwt__Issuer: ${JWT_ISSUER:-linklogistics}
-      Jwt__Audience: ${JWT_AUDIENCE:-linklogistics}
+      Jwt__Issuer: ${JWT_ISSUER:-ulak}
+      Jwt__Audience: ${JWT_AUDIENCE:-ulak}
       Storage__Endpoint: ${MINIO_ENDPOINT:-http://minio:9000}
       Storage__PublicEndpoint: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:9000}
       Storage__AccessKey: ${MINIO_ROOT_USER}
@@ -85,7 +85,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: src/LinkLogistics.Web/Dockerfile
+      dockerfile: src/Ulak.Web/Dockerfile
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ApiClient__BaseUrl: "http://api:8080"
