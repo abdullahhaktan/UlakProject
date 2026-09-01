@@ -1,0 +1,94 @@
+@model IReadOnlyList<Ulak.Shared.Admin.DriverOption>
+@{
+    ViewData["Title"] = "Sürücüler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Sürücüler</h1>
+    <button class="btn btn-primary" id="btn-new-driver">Sürücü ekle</button>
+</div>
+
+<div class="card"><div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+            <tr><th>Ad</th><th>Telefon</th></tr>
+        </thead>
+        <tbody id="drivers-body">
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="2" class="text-muted text-center py-4">Henüz sürücü yok. "Sürücü ekle" ile başlayın.</td></tr>
+            }
+            @foreach (var d in Model)
+            {
+                <tr><td>@d.Name</td><td><code>@d.Phone</code></td></tr>
+            }
+        </tbody>
+    </table>
+</div></div>
+
+<div class="modal fade" id="modal-driver" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sürücü ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="d-error" class="alert alert-danger d-none py-2"></div>
+                <div id="d-form">
+                    <div class="mb-2"><label class="form-label small">Ad Soyad</label><input id="d-name" class="form-control form-control-sm" /></div>
+                    <div class="mb-2"><label class="form-label small">Telefon</label><input id="d-phone" class="form-control form-control-sm" placeholder="+9055..." /></div>
+                </div>
+                <div id="d-result" class="alert alert-success d-none">
+                    <strong>Sürücü oluşturuldu.</strong><br />
+                    Bu geçici şifreyi sürücüye iletin — ilk girişte değiştirmesi istenecek:
+                    <div class="mt-2 fs-5"><code id="d-temp"></code></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="d-save">Oluştur</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const token = $('@Html.AntiForgeryToken()').val();
+        const modal = new bootstrap.Modal("#modal-driver");
+
+        $("#btn-new-driver").on("click", () => {
+            $("#d-error").addClass("d-none");
+            $("#d-result").addClass("d-none");
+            $("#d-form").removeClass("d-none");
+            $("#d-name,#d-phone").val("");
+            $("#d-save").prop("disabled", false).text("Oluştur");
+            modal.show();
+        });
+
+        $("#d-save").on("click", () => {
+            const body = { name: $("#d-name").val().trim(), phone: $("#d-phone").val().trim() };
+            if (!body.name || !body.phone) {
+                $("#d-error").removeClass("d-none").text("Ad ve telefon gerekli.");
+                return;
+            }
+            $("#d-save").prop("disabled", true);
+            $.ajax({
+                url: "@Url.Action("Create", "Drivers")", method: "POST", contentType: "application/json",
+                headers: { "RequestVerificationToken": token }, data: JSON.stringify(body)
+            }).done(res => {
+                $("#d-error").addClass("d-none");
+                $("#d-form").addClass("d-none");
+                $("#d-temp").text(res.tempPassword);
+                $("#d-result").removeClass("d-none");
+                $("#d-save").addClass("d-none");
+                $("#drivers-body").find("td.text-muted").closest("tr").remove();
+                $("#drivers-body").append(`<tr><td>${res.name}</td><td><code>${res.phone}</code></td></tr>`);
+            }).fail(x => {
+                $("#d-save").prop("disabled", false);
+                $("#d-error").removeClass("d-none").text((x.responseJSON && x.responseJSON.message) || "Hata oluştu.");
+            });
+        });
+    </script>
+}

@@ -39,6 +39,21 @@ public sealed class UlakApiClient
         return await response.Content.ReadFromJsonAsync<AuthResponse>(cancellationToken: ct);
     }
 
+    /// <summary>Self-service company sign-up. Returns a session, or throws <see cref="ApiException"/> (e.g. 409).</summary>
+    public async Task<AuthResponse> SignUpAsync(SignUpRequest request, CancellationToken ct)
+    {
+        var response = await _http.PostAsJsonAsync("signup", request, ct);
+        await ThrowIfProblem(response);
+        return (await response.Content.ReadFromJsonAsync<AuthResponse>(cancellationToken: ct))!;
+    }
+
+    public async Task<CreateDriverResponse> CreateDriverAsync(CreateDriverRequest request, CancellationToken ct)
+    {
+        var response = await _http.PostAsJsonAsync("admin/drivers", request, ct);
+        await ThrowIfProblem(response);
+        return (await response.Content.ReadFromJsonAsync<CreateDriverResponse>(cancellationToken: ct))!;
+    }
+
     public Task<PagedResponse<AdminDeliveryRow>?> GetDeliveriesAsync(GridQuery query, CancellationToken ct) =>
         _http.GetFromJsonAsync<PagedResponse<AdminDeliveryRow>>(
             "admin/deliveries" + ToQueryString(query), ct);

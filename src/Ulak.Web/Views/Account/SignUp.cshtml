@@ -1,0 +1,52 @@
+@model SignUpViewModel
+@{
+    ViewData["Title"] = "Firma kaydı";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-1">Firma kaydı</h1>
+                <p class="text-muted small">Firmanızı oluşturun, dakikalar içinde kullanmaya başlayın.</p>
+
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-danger py-2">@Model.Error</div>
+                }
+
+                <form asp-action="SignUp" method="post">
+                    <div class="mb-3">
+                        <label asp-for="CompanyName" class="form-label">Firma adı</label>
+                        <input asp-for="CompanyName" class="form-control" placeholder="Örn. Yıldız Nakliyat" />
+                        <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="AdminName" class="form-label">Adınız</label>
+                        <input asp-for="AdminName" class="form-control" placeholder="Ad Soyad" />
+                        <span asp-validation-for="AdminName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label">Telefon</label>
+                        <input asp-for="Phone" class="form-control" autocomplete="username" placeholder="+9055..." />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Şifre</label>
+                        <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Kaydı oluştur</button>
+                </form>
+
+                <hr />
+                <p class="text-muted small mb-0">Zaten hesabınız var mı? <a asp-action="Login">Giriş yapın</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

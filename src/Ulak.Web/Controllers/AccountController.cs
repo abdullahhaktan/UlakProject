@@ -40,6 +40,46 @@ public sealed class AccountController : Controller
             return View(model);
         }
 
+        await SignInWithTokensAsync(auth);
+
+        return Url.IsLocalUrl(model.ReturnUrl)
+            ? Redirect(model.ReturnUrl!)
+            : RedirectToAction("Index", "Dashboard");
+    }
+
+    [HttpGet]
+    public IActionResult SignUp() => View(new SignUpViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SignUp(SignUpViewModel model, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        try
+        {
+            var auth = await _api.SignUpAsync(
+                new Ulak.Shared.Auth.SignUpRequest(
+                    model.CompanyName.Trim(), model.AdminName.Trim(), model.Phone.Trim(), model.Password),
+                ct);
+
+            await SignInWithTokensAsync(auth);
+            return RedirectToAction("Index", "Dashboard");
+        }
+        catch (ApiException ex)
+        {
+            model.Error = ex.StatusCode == 409
+                ? "Bu telefon numarası zaten kayıtlı."
+                : ex.Message;
+            return View(model);
+        }
+    }
+
+    private async Task SignInWithTokensAsync(Ulak.Shared.Auth.AuthResponse auth)
+    {
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, auth.User.Id.ToString()),
@@ -47,8 +87,8 @@ public sealed class AccountController : Controller
             new(ClaimTypes.MobilePhone, auth.User.Phone),
             new(ClaimTypes.Role, auth.User.Role),
         };
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
+        var principal = new ClaimsPrincipal(
+            new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
 
         var props = new AuthenticationProperties { IsPersistent = true };
         props.StoreTokens(
@@ -63,10 +103,6 @@ public sealed class AccountController : Controller
         ]);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
-
-        return Url.IsLocalUrl(model.ReturnUrl)
-            ? Redirect(model.ReturnUrl!)
-            : RedirectToAction("Index", "Dashboard");
     }
 
     [HttpPost]
