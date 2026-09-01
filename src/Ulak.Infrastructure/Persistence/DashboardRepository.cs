@@ -8,10 +8,11 @@ public sealed class DashboardRepository : IDashboardRepository
 
     public DashboardRepository(IDbConnectionFactory factory) => _factory = factory;
 
-    public async Task<DashboardSummary> GetSummaryAsync(CancellationToken ct)
+    public async Task<DashboardSummary> GetSummaryAsync(int companyId, CancellationToken ct)
     {
         using var connection = _factory.Create();
-        using var multi = await connection.QueryMultipleProcAsync("dbo.usp_Dashboard_Summary", null, ct);
+        using var multi = await connection.QueryMultipleProcAsync(
+            "dbo.usp_Dashboard_Summary", new { CompanyId = companyId }, ct);
 
         var counts = await multi.ReadSingleAsync<CountsRow>();
         var trend = (await multi.ReadAsync<TrendRow>())

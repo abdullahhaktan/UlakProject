@@ -1,35 +1,37 @@
 /* =====================================================================
-   900_seed.sql  --  Demo data: 1 company, 2 drivers + 1 ops user,
-   10 deliveries with mixed status / assignment.
+   900_seed.sql  --  Demo data: TWO companies so tenant isolation is
+   visible in the panel and the tests.
 
    Credentials (phone / password):
-     Ops    :  +905550001122 / Ops12345!
-     Driver1:  +905551112233 / Driver123!
-     Driver2:  +905554445566 / Driver123!
+     Ulak Demo       admin  :  +905550001122 / Ops12345!
+     Ulak Demo       driver1:  +905551112233 / Driver123!
+     Ulak Demo       driver2:  +905554445566 / Driver123!
+     Ornek Nakliyat  admin  :  +905550002233 / Ops12345!
+     Ornek Nakliyat  driver :  +905557778899 / Driver123!
 
-   Password hashes are PBKDF2-SHA256, 100000 iterations, produced by the
-   same scheme as Infrastructure/Security/PasswordHasher.cs.
+   Password hashes are PBKDF2-SHA256, 100000 iterations (PasswordHasher.cs).
    Idempotent so it can also be applied to an already-seeded database.
    ===================================================================== */
 SET NOCOUNT ON;
 GO
 
-DECLARE @companyId INT;
+DECLARE @adminHash  VARCHAR(300) = 'pbkdf2$sha256$100000$Qk7QyCH6WD397x2NC32ghg==$GcER5iRA5QR9YYm5CovUUY1n1bZBhj4h0SN0mlkNhOw=';
+DECLARE @driverHash VARCHAR(300) = 'pbkdf2$sha256$100000$uvzObMCS0ayoIZm2Tb/3TQ==$SZf+vrKU90Oc6FFO3LYY4bH18cbL0ee877jGst8ccx0=';
 
+/* ==================  COMPANY 1 — Ulak Demo  ====================== */
+DECLARE @companyId INT;
 IF NOT EXISTS (SELECT 1 FROM dbo.Company WHERE Name = N'Ulak Demo')
     INSERT dbo.Company (Name) VALUES (N'Ulak Demo');
-
 SELECT @companyId = Id FROM dbo.Company WHERE Name = N'Ulak Demo';
 
-/* ---- Users ---- */
+IF NOT EXISTS (SELECT 1 FROM dbo.CompanySettings WHERE CompanyId = @companyId)
+    INSERT dbo.CompanySettings (CompanyId, DisplayName) VALUES (@companyId, N'Ulak Demo');
+
 MERGE dbo.AppUser AS tgt
 USING (VALUES
-    (@companyId, '+905550001122', N'Operasyon Kullanicisi',
-        'pbkdf2$sha256$100000$Qk7QyCH6WD397x2NC32ghg==$GcER5iRA5QR9YYm5CovUUY1n1bZBhj4h0SN0mlkNhOw=', 'Ops'),
-    (@companyId, '+905551112233', N'Ahmet Yilmaz (Surucu)',
-        'pbkdf2$sha256$100000$uvzObMCS0ayoIZm2Tb/3TQ==$SZf+vrKU90Oc6FFO3LYY4bH18cbL0ee877jGst8ccx0=', 'Driver'),
-    (@companyId, '+905554445566', N'Mehmet Demir (Surucu)',
-        'pbkdf2$sha256$100000$qYL2al5BzBezIuBLGvpf4w==$di6zxZ7frcCj+cxfOaRTNAQyTz0zPxqI9YX6rSjwVnM=', 'Driver')
+    (@companyId, '+905550001122', N'Operasyon Kullanicisi', @adminHash,  'Admin'),
+    (@companyId, '+905551112233', N'Ahmet Yilmaz (Surucu)', @driverHash, 'Driver'),
+    (@companyId, '+905554445566', N'Mehmet Demir (Surucu)', @driverHash, 'Driver')
 ) AS src (CompanyId, Phone, Name, PasswordHash, Role)
    ON tgt.Phone = src.Phone
 WHEN NOT MATCHED THEN
@@ -39,7 +41,6 @@ WHEN NOT MATCHED THEN
 DECLARE @driver1 INT = (SELECT Id FROM dbo.AppUser WHERE Phone = '+905551112233');
 DECLARE @driver2 INT = (SELECT Id FROM dbo.AppUser WHERE Phone = '+905554445566');
 
-/* ---- Deliveries (idempotent on OrderRef) ---- */
 MERGE dbo.Delivery AS tgt
 USING (VALUES
     ('ORD-24001', N'Ayse Kaya',       '+905321110001', N'Bagdat Cad. No:12 D:4, Kadikoy/Istanbul',        40.982100, 29.062700, N'Kapida odeme yok',            @driver1, 'Pending'),
@@ -57,5 +58,39 @@ USING (VALUES
 WHEN NOT MATCHED THEN
     INSERT (CompanyId, OrderRef, RecipientName, RecipientPhone, AddressText, Lat, Lng, Note, AssignedDriverId, Status)
     VALUES (@companyId, src.OrderRef, src.RecipientName, src.RecipientPhone, src.AddressText,
+            src.Lat, src.Lng, src.Note, src.AssignedDriverId, src.Status);
+
+/* ==================  COMPANY 2 — Ornek Nakliyat  ================= */
+DECLARE @company2 INT;
+IF NOT EXISTS (SELECT 1 FROM dbo.Company WHERE Name = N'Ornek Nakliyat')
+    INSERT dbo.Company (Name) VALUES (N'Ornek Nakliyat');
+SELECT @company2 = Id FROM dbo.Company WHERE Name = N'Ornek Nakliyat';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.CompanySettings WHERE CompanyId = @company2)
+    INSERT dbo.CompanySettings (CompanyId, DisplayName, PricingModel, PerKmRate)
+    VALUES (@company2, N'Ornek Nakliyat', 'PerKm', 9.50);
+
+MERGE dbo.AppUser AS tgt
+USING (VALUES
+    (@company2, '+905550002233', N'Fatma Kara (Yonetici)', @adminHash,  'Admin'),
+    (@company2, '+905557778899', N'Hasan Ak (Surucu)',     @driverHash, 'Driver')
+) AS src (CompanyId, Phone, Name, PasswordHash, Role)
+   ON tgt.Phone = src.Phone
+WHEN NOT MATCHED THEN
+    INSERT (CompanyId, Phone, Name, PasswordHash, Role)
+    VALUES (src.CompanyId, src.Phone, src.Name, src.PasswordHash, src.Role);
+
+DECLARE @driver3 INT = (SELECT Id FROM dbo.AppUser WHERE Phone = '+905557778899');
+
+MERGE dbo.Delivery AS tgt
+USING (VALUES
+    ('ON-5001', N'Mustafa Sen',  '+905329990001', N'Kemeralti Cad. No:15, Konak/Izmir',       38.418500, 27.128200, NULL,               @driver3, 'Pending'),
+    ('ON-5002', N'Leyla Yavuz',  '+905329990002', N'Alsancak Mah. 1478 Sok. No:6, Izmir',      38.437000, 27.142900, N'Bina girisi kod: 4521', @driver3, 'Pending'),
+    ('ON-5003', N'Emre Koc',     '+905329990003', N'Bornova Mah. Ege Uni. Kampus, Izmir',      38.456700, 27.211900, NULL,               NULL,     'Pending')
+) AS src (OrderRef, RecipientName, RecipientPhone, AddressText, Lat, Lng, Note, AssignedDriverId, Status)
+   ON tgt.CompanyId = @company2 AND tgt.OrderRef = src.OrderRef
+WHEN NOT MATCHED THEN
+    INSERT (CompanyId, OrderRef, RecipientName, RecipientPhone, AddressText, Lat, Lng, Note, AssignedDriverId, Status)
+    VALUES (@company2, src.OrderRef, src.RecipientName, src.RecipientPhone, src.AddressText,
             src.Lat, src.Lng, src.Note, src.AssignedDriverId, src.Status);
 GO

@@ -1,4 +1,3 @@
-using System.Globalization;
 using Ulak.Api.Auth;
 using Ulak.Core.Abstractions;
 using Ulak.Core.Domain;
@@ -22,41 +21,32 @@ public sealed class DeliveriesController : ControllerBase
         _currentUser = currentUser;
     }
 
-    /// <summary>The signed-in driver's deliveries for a day (defaults to today, UTC).</summary>
+    /// <summary>
+    /// The signed-in driver's working list: the whole company's open deliveries,
+    /// each flagged <c>isMine</c>. Teammates' rows are read-only.
+    /// </summary>
     [HttpGet]
     [Authorize(Roles = UserRoles.Driver)]
     [ProducesResponseType<IReadOnlyList<DeliveryListItem>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListForDriver([FromQuery] string? date, CancellationToken ct)
+    public async Task<IActionResult> ListForDriver(CancellationToken ct)
     {
-        DateOnly? day = null;
-        if (!string.IsNullOrWhiteSpace(date))
-        {
-            if (!DateOnly.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
-            {
-                return Problem(detail: "date must be in YYYY-MM-DD format.",
-                    statusCode: StatusCodes.Status400BadRequest);
-            }
-
-            day = parsed;
-        }
-
-        var rows = await _deliveries.ListForDriverAsync(_currentUser.Id, day, ct);
+        var rows = await _deliveries.ListForDriverAsync(_currentUser.CompanyId, _currentUser.Id, ct);
         return Ok(rows.Select(ToListItem));
     }
 
-    /// <summary>A single delivery. Drivers only see deliveries assigned to them.</summary>
+    /// <summary>A single delivery. Any user in the tenant can read any of its deliveries.</summary>
     [HttpGet("{id:int}")]
     [ProducesResponseType<DeliveryDetail>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(int id, CancellationToken ct)
     {
-        var delivery = await _deliveries.GetByIdAsync(id, _currentUser.Id, _currentUser.Role, ct);
+        var delivery = await _deliveries.GetByIdAsync(_currentUser.CompanyId, id, ct);
         return delivery is null ? NotFound() : Ok(ToDetail(delivery));
     }
 
-    /// <summary>Ops creates a delivery.</summary>
+    /// <summary>Admin creates a delivery.</summary>
     [HttpPost]
-    [Authorize(Roles = UserRoles.Ops)]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType<DeliveryDetail>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Create([FromBody] CreateDeliveryRequest request, CancellationToken ct)
@@ -70,26 +60,28 @@ public sealed class DeliveriesController : ControllerBase
             request.Lat,
             request.Lng,
             request.Note,
-            request.AssignedDriverId), ct);
+            request.AssignedDriverId,
+            request.CustomerName,
+            request.AgreedPrice), ct);
 
-        var created = await _deliveries.GetByIdAsync(id, _currentUser.Id, _currentUser.Role, ct);
+        var created = await _deliveries.GetByIdAsync(_currentUser.CompanyId, id, ct);
         return CreatedAtAction(nameof(GetById), new { id }, created is null ? null : ToDetail(created));
     }
 
-    /// <summary>Ops assigns / reassigns a pending delivery to a driver.</summary>
+    /// <summary>Admin assigns / reassigns a pending delivery to a driver.</summary>
     [HttpPatch("{id:int}/assign")]
-    [Authorize(Roles = UserRoles.Ops)]
+    [Authorize(Roles = UserRoles.Admin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Assign(int id, [FromBody] AssignDeliveryRequest request, CancellationToken ct)
     {
-        await _deliveries.AssignAsync(id, request.DriverId, ct);
+        await _deliveries.AssignAsync(_currentUser.CompanyId, id, request.DriverId, ct);
         return NoContent();
     }
 
     private static DeliveryListItem ToListItem(DriverDelivery d) => new(
         d.Id, d.OrderRef, d.RecipientName, d.RecipientPhone, d.AddressText,
-        d.Lat, d.Lng, d.Note, d.Status, d.CreatedAtUtc, d.HasProof);
+        d.Lat, d.Lng, d.Note, d.Status, d.CreatedAtUtc, d.HasProof, d.IsMine);
 
     private static DeliveryDetail ToDetail(Delivery d) => new(
         d.Id, d.OrderRef, d.RecipientName, d.RecipientPhone, d.AddressText,

@@ -21,9 +21,9 @@ public sealed class ProofDocumentService : IProofDocumentService
         _logger = logger;
     }
 
-    public async Task<byte[]?> RenderProofPdfAsync(long proofId, CancellationToken ct)
+    public async Task<byte[]?> RenderProofPdfAsync(int companyId, long proofId, CancellationToken ct)
     {
-        var proof = await _proofs.GetByIdAsync(proofId, ct);
+        var proof = await _proofs.GetByIdAsync(companyId, proofId, ct);
         if (proof is null)
         {
             return null;
@@ -134,10 +134,10 @@ public sealed class ProofDocumentService : IProofDocumentService
         return document.GeneratePdf();
     }
 
-    public async Task<byte[]> ExportProofsXlsxAsync(ProofSearchQuery query, CancellationToken ct)
+    public async Task<byte[]> ExportProofsXlsxAsync(int companyId, ProofSearchQuery query, CancellationToken ct)
     {
         var exportQuery = query with { Skip = 0, Take = 5000 };
-        var page = await _proofs.AdminSearchAsync(exportQuery, ct);
+        var page = await _proofs.AdminSearchAsync(companyId, exportQuery, ct);
 
         using var workbook = new XLWorkbook();
         var sheet = workbook.Worksheets.Add("Proofs");

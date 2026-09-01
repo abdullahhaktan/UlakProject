@@ -40,14 +40,17 @@ public sealed class ProofFlowTests
     }
 
     [Fact]
-    public async Task A_driver_cannot_see_a_delivery_assigned_to_someone_else()
+    public async Task A_driver_can_read_a_teammates_delivery_but_not_a_delivery_from_another_company()
     {
         var client = await AuthedClientAsync(Driver1, Password);
 
-        // ORD-24004 (id 4) is assigned to driver 2 in the seed
-        var response = await client.GetAsync("/deliveries/4");
+        // ORD-24004 (id 4) is assigned to driver 2 in the SAME company -> readable
+        var teammate = await client.GetAsync("/deliveries/4");
+        teammate.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        // ids 11+ belong to "Ornek Nakliyat" -> not visible
+        var otherCompany = await client.GetAsync("/deliveries/11");
+        otherCompany.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]

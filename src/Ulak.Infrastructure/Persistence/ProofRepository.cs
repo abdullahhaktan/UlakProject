@@ -11,12 +11,13 @@ public sealed class ProofRepository : IProofRepository
 
     public ProofRepository(IDbConnectionFactory factory) => _factory = factory;
 
-    public async Task<ProofCreateResult> CreateAsync(NewProof proof, CancellationToken ct)
+    public async Task<ProofCreateResult> CreateAsync(int companyId, NewProof proof, CancellationToken ct)
     {
         using var connection = _factory.Create();
 
         var parameters = new DynamicParameters(new
         {
+            CompanyId = companyId,
             proof.ClientUuid,
             proof.DeliveryId,
             proof.DriverId,
@@ -37,13 +38,15 @@ public sealed class ProofRepository : IProofRepository
         return row;
     }
 
-    public async Task<PagedResult<AdminProofRow>> AdminSearchAsync(ProofSearchQuery query, CancellationToken ct)
+    public async Task<PagedResult<AdminProofRow>> AdminSearchAsync(
+        int companyId, ProofSearchQuery query, CancellationToken ct)
     {
         using var connection = _factory.Create();
         using var multi = await connection.QueryMultipleProcAsync(
             "dbo.usp_Admin_ProofSearch",
             new
             {
+                CompanyId = companyId,
                 FromDate = query.FromDate?.ToDateTime(TimeOnly.MinValue),
                 ToDate = query.ToDate?.ToDateTime(TimeOnly.MinValue),
                 query.DriverId,
@@ -61,11 +64,11 @@ public sealed class ProofRepository : IProofRepository
         return new PagedResult<AdminProofRow>(items, total);
     }
 
-    public async Task<AdminProofDetail?> GetByIdAsync(long id, CancellationToken ct)
+    public async Task<AdminProofDetail?> GetByIdAsync(int companyId, long id, CancellationToken ct)
     {
         using var connection = _factory.Create();
         using var multi = await connection.QueryMultipleProcAsync(
-            "dbo.usp_Admin_ProofGetById", new { Id = id }, ct);
+            "dbo.usp_Admin_ProofGetById", new { CompanyId = companyId, Id = id }, ct);
 
         var header = await multi.ReadSingleOrDefaultAsync<ProofHeaderRow>();
         if (header is null)

@@ -3,7 +3,9 @@ namespace Ulak.Core.Domain;
 public static class UserRoles
 {
     public const string Driver = "Driver";
-    public const string Ops = "Ops";
+
+    /// <summary>Firm owner/manager: web panel + mobile, manages drivers, sees all records.</summary>
+    public const string Admin = "Admin";
 }
 
 public static class DeliveryStatuses

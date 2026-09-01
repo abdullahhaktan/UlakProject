@@ -1,4 +1,5 @@
 using System.Globalization;
+using Ulak.Api.Auth;
 using Ulak.Core.Abstractions;
 using Ulak.Core.Domain;
 using Ulak.Infrastructure;
@@ -11,7 +12,7 @@ namespace Ulak.Api.Controllers;
 
 [ApiController]
 [Route("admin/proofs")]
-[Authorize(Roles = UserRoles.Ops)]
+[Authorize(Roles = UserRoles.Admin)]
 public sealed class AdminProofsController : ControllerBase
 {
     private static readonly string[] SortableColumns =
@@ -21,17 +22,20 @@ public sealed class AdminProofsController : ControllerBase
     private readonly IObjectStorage _storage;
     private readonly IProofDocumentService _documents;
     private readonly StorageOptions _storageOptions;
+    private readonly ICurrentUser _currentUser;
 
     public AdminProofsController(
         IProofRepository proofs,
         IObjectStorage storage,
         IProofDocumentService documents,
-        IOptions<StorageOptions> storageOptions)
+        IOptions<StorageOptions> storageOptions,
+        ICurrentUser currentUser)
     {
         _proofs = proofs;
         _storage = storage;
         _documents = documents;
         _storageOptions = storageOptions.Value;
+        _currentUser = currentUser;
     }
 
     /// <summary>Paged / filtered proof list for the ops panel grid.</summary>
@@ -60,7 +64,7 @@ public sealed class AdminProofsController : ControllerBase
             Math.Max(0, skip),
             Math.Clamp(take, 1, 200));
 
-        var page = await _proofs.AdminSearchAsync(query, ct);
+        var page = await _proofs.AdminSearchAsync(_currentUser.CompanyId, query, ct);
         var items = page.Items.Select(r => new ProofListItem(
             r.Id, r.DeliveryId, r.OrderRef, r.RecipientName, r.Status, r.FailureReason,
             r.DriverId, r.DriverName, r.PhotoCount, r.CapturedAtUtc, r.SyncedAtUtc)).ToList();
@@ -73,7 +77,7 @@ public sealed class AdminProofsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(long id, CancellationToken ct)
     {
-        var detail = await _proofs.GetByIdAsync(id, ct);
+        var detail = await _proofs.GetByIdAsync(_currentUser.CompanyId, id, ct);
         if (detail is null)
         {
             return NotFound();
@@ -101,7 +105,7 @@ public sealed class AdminProofsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Pdf(long id, CancellationToken ct)
     {
-        var pdf = await _documents.RenderProofPdfAsync(id, ct);
+        var pdf = await _documents.RenderProofPdfAsync(_currentUser.CompanyId, id, ct);
         return pdf is null ? NotFound() : File(pdf, "application/pdf", $"proof-{id}.pdf");
     }
 
@@ -120,7 +124,7 @@ public sealed class AdminProofsController : ControllerBase
             string.IsNullOrWhiteSpace(search) ? null : search.Trim(),
             "CapturedAtUtc", "DESC", 0, 5000);
 
-        var bytes = await _documents.ExportProofsXlsxAsync(query, ct);
+        var bytes = await _documents.ExportProofsXlsxAsync(_currentUser.CompanyId, query, ct);
         return File(bytes,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             $"proofs-{DateTime.UtcNow:yyyyMMdd-HHmm}.xlsx");

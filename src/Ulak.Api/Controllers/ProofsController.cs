@@ -50,7 +50,7 @@ public sealed class ProofsController : ControllerBase
             request.CapturedAt.UtcDateTime,
             photos);
 
-        var result = await _proofs.CreateAsync(proof, ct);
+        var result = await _proofs.CreateAsync(_currentUser.CompanyId, proof, ct);
         var response = new CreateProofResponse(result.Id, result.DeliveryId, result.Status, result.WasDuplicate);
 
         return result.WasDuplicate

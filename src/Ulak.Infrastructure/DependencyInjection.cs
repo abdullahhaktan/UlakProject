@@ -41,6 +41,7 @@ public static class DependencyInjection
         services.AddSingleton<IObjectStorage, MinioObjectStorage>();
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IDeliveryRepository, DeliveryRepository>();
         services.AddScoped<IProofRepository, ProofRepository>();

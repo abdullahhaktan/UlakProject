@@ -12,10 +12,25 @@ public interface IUserRepository
 {
     Task<AppUserWithHash?> GetByPhoneAsync(string phone, CancellationToken ct);
 
-    Task<IReadOnlyList<DriverLookup>> ListDriversAsync(CancellationToken ct);
+    Task<IReadOnlyList<DriverLookup>> ListDriversAsync(int companyId, CancellationToken ct);
+
+    /// <summary>Self-service sign-up: new company + its first Admin. Returns the Admin.</summary>
+    Task<AppUser> SignUpCompanyAsync(
+        string companyName, string adminName, string phone, string passwordHash, CancellationToken ct);
+
+    /// <summary>Admin adds a driver to their own company (MustChangePassword = true).</summary>
+    Task<AppUser> CreateDriverAsync(
+        int companyId, string name, string phone, string passwordHash, CancellationToken ct);
+
+    Task ChangePasswordAsync(int userId, string newPasswordHash, CancellationToken ct);
 }
 
 public sealed record DriverLookup(int Id, string Name, string Phone);
+
+public interface ICompanyRepository
+{
+    Task<CompanySettings?> GetSettingsAsync(int companyId, CancellationToken ct);
+}
 
 public interface IRefreshTokenRepository
 {
@@ -29,29 +44,31 @@ public interface IRefreshTokenRepository
 
 public interface IDeliveryRepository
 {
-    Task<IReadOnlyList<DriverDelivery>> ListForDriverAsync(int driverId, DateOnly? date, CancellationToken ct);
+    /// <summary>The whole company's open list, each row flagged <see cref="DriverDelivery.IsMine"/>.</summary>
+    Task<IReadOnlyList<DriverDelivery>> ListForDriverAsync(int companyId, int driverId, CancellationToken ct);
 
-    Task<Delivery?> GetByIdAsync(int id, int requestingUserId, string role, CancellationToken ct);
+    /// <summary>Any delivery in the tenant; the caller's read access is by company, not assignment.</summary>
+    Task<Delivery?> GetByIdAsync(int companyId, int id, CancellationToken ct);
 
     Task<int> CreateAsync(CreateDeliveryInput input, CancellationToken ct);
 
-    Task AssignAsync(int deliveryId, int driverId, CancellationToken ct);
+    Task AssignAsync(int companyId, int deliveryId, int driverId, CancellationToken ct);
 
-    Task<PagedResult<AdminDeliveryRow>> AdminSearchAsync(DeliverySearchQuery query, CancellationToken ct);
+    Task<PagedResult<AdminDeliveryRow>> AdminSearchAsync(int companyId, DeliverySearchQuery query, CancellationToken ct);
 }
 
 public interface IProofRepository
 {
-    Task<ProofCreateResult> CreateAsync(NewProof proof, CancellationToken ct);
+    Task<ProofCreateResult> CreateAsync(int companyId, NewProof proof, CancellationToken ct);
 
-    Task<PagedResult<AdminProofRow>> AdminSearchAsync(ProofSearchQuery query, CancellationToken ct);
+    Task<PagedResult<AdminProofRow>> AdminSearchAsync(int companyId, ProofSearchQuery query, CancellationToken ct);
 
-    Task<AdminProofDetail?> GetByIdAsync(long id, CancellationToken ct);
+    Task<AdminProofDetail?> GetByIdAsync(int companyId, long id, CancellationToken ct);
 }
 
 public interface IDashboardRepository
 {
-    Task<DashboardSummary> GetSummaryAsync(CancellationToken ct);
+    Task<DashboardSummary> GetSummaryAsync(int companyId, CancellationToken ct);
 }
 
 public sealed record CreateDeliveryInput(
@@ -63,7 +80,9 @@ public sealed record CreateDeliveryInput(
     decimal? Lat,
     decimal? Lng,
     string? Note,
-    int? AssignedDriverId);
+    int? AssignedDriverId,
+    string? CustomerName = null,
+    decimal? AgreedPrice = null);
 
 public sealed record PagedResult<T>(IReadOnlyList<T> Items, int TotalCount);
 
