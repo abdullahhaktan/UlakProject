@@ -25,12 +25,15 @@ IF COL_LENGTH(N'dbo.AppUser', N'MustChangePassword') IS NULL
             CONSTRAINT DF_AppUser_MustChangePassword DEFAULT 0;
 GO
 
-UPDATE dbo.AppUser SET Role = 'Admin' WHERE Role = 'Ops';
-GO
-
+/* drop the old CHECK first — it still forbids 'Admin', so the UPDATE below
+   would fail against it on a database that already has 'Ops' rows. */
 IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_AppUser_Role')
     ALTER TABLE dbo.AppUser DROP CONSTRAINT CK_AppUser_Role;
 GO
+
+UPDATE dbo.AppUser SET Role = 'Admin' WHERE Role = 'Ops';
+GO
+
 ALTER TABLE dbo.AppUser
     ADD CONSTRAINT CK_AppUser_Role CHECK (Role IN ('Driver','Admin'));
 GO
