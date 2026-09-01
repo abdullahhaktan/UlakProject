@@ -9,4 +9,6 @@ public partial class DeliveryDetailPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    private async void OnBack(object? sender, TappedEventArgs e) => await Shell.Current.GoToAsync("..");
 }

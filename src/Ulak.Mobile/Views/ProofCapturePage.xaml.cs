@@ -14,4 +14,6 @@ public partial class ProofCapturePage : ContentPage
     }
 
     private void OnClearSignature(object? sender, EventArgs e) => SignaturePad.Clear();
+
+    private async void OnBack(object? sender, TappedEventArgs e) => await Shell.Current.GoToAsync("..");
 }

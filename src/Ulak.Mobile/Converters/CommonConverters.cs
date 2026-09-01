@@ -26,14 +26,48 @@ public sealed class InvertedBoolConverter : IValueConverter
         value is not true;
 }
 
-/// <summary>Maps a delivery/proof status string to a colour.</summary>
+internal static class ThemeColor
+{
+    public static Color Pick(string light, string dark) =>
+        Color.FromArgb(Application.Current?.RequestedTheme == AppTheme.Dark ? dark : light);
+}
+
+/// <summary>Delivery/proof status → foreground colour (badge text + border, list accent).</summary>
 public sealed class StatusColorConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
     {
-        "Delivered" => Colors.SeaGreen,
-        "Failed" => Colors.IndianRed,
-        _ => Colors.Gray,
+        "Delivered" => ThemeColor.Pick("#3F6B4E", "#8FD0A4"),   // Ok
+        "Failed" => ThemeColor.Pick("#A8443C", "#F0A49C"),      // Error
+        _ => ThemeColor.Pick("#595D6C", "#B2B6CA"),             // Muted
+    };
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Delivery/proof status → badge background tint.</summary>
+public sealed class StatusTintConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
+    {
+        "Delivered" => ThemeColor.Pick("#E3EFE6", "#22322A"),   // OkTint
+        "Failed" => ThemeColor.Pick("#F8E5E3", "#3A2523"),      // ErrorTint
+        _ => ThemeColor.Pick("#E7E9F2", "#2A2C33"),             // neutral
+    };
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Delivery/proof status → Turkish label for the badge.</summary>
+public sealed class StatusLabelConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
+    {
+        "Delivered" => "Teslim edildi",
+        "Failed" => "Teslim edilemedi",
+        _ => "Bekliyor",
     };
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

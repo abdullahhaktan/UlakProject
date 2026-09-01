@@ -14,6 +14,8 @@
             <conv:IsPresentConverter x:Key="IsNotNullConverter" />
             <conv:InvertedBoolConverter x:Key="InverseBoolConverter" />
             <conv:StatusColorConverter x:Key="StatusColorConverter" />
+            <conv:StatusTintConverter x:Key="StatusTintConverter" />
+            <conv:StatusLabelConverter x:Key="StatusLabelConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

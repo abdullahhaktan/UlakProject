@@ -4,78 +4,148 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Ulak.Mobile.ViewModels"
+    xmlns:st="clr-namespace:Ulak.Mobile.Theme"
     xmlns:dto="clr-namespace:Ulak.Shared.Deliveries;assembly=Ulak.Shared"
     x:DataType="vm:DeliveryListViewModel"
-    Title="Bugünün teslimatları">
+    Title="Bugünün teslimatları"
+    Shell.NavBarIsVisible="False">
 
-    <Shell.TitleView>
-        <Grid ColumnDefinitions="*,Auto" Padding="0,0,8,0">
-            <Label VerticalOptions="Center" TextColor="White">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Teslimatlar  " FontAttributes="Bold" />
-                        <Span Text="{Binding DriverName}" FontSize="12" />
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Button Grid.Column="1" Text="Çıkış" FontSize="12" Padding="8,2"
-                    BackgroundColor="Transparent" TextColor="White"
-                    Command="{Binding SignOutCommand}" />
-        </Grid>
-    </Shell.TitleView>
+    <Grid RowDefinitions="Auto,*">
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <!-- top bar -->
+        <Grid Grid.Row="0" Style="{StaticResource TopBar}" ColumnDefinitions="Auto,*,Auto">
+            <Border WidthRequest="34" HeightRequest="34" Padding="0" Stroke="Transparent"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="9" />
+                </Border.StrokeShape>
+                <Label Text="{x:Static st:Icon.Package}" FontFamily="Phosphor" FontSize="17"
+                       TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
 
-        <Label Grid.Row="0" Padding="16,8" BackgroundColor="#FFF3CD" TextColor="#664D03"
-               Text="{Binding ErrorMessage}"
-               IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}" />
+            <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                <Label Text="Teslimatlar" Style="{StaticResource ScreenTitle}" />
+                <Label Text="{Binding DriverName}" Style="{StaticResource Secondary}" FontSize="12.5" />
+            </VerticalStackLayout>
 
-        <Grid Grid.Row="1" Padding="16,8" ColumnDefinitions="*,Auto" BackgroundColor="#CFE2FF"
-              IsVisible="{Binding HasQueued}">
-            <Label VerticalOptions="Center" TextColor="#084298"
-                   Text="{Binding QueuedCount, StringFormat='{0} kayıt gönderilmeyi bekliyor'}" />
-            <Button Grid.Column="1" Text="Şimdi gönder" FontSize="12" Padding="10,2"
-                    Command="{Binding SyncNowCommand}" />
+            <Border Grid.Column="2" Style="{StaticResource IconButton}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SignOutCommand}" />
+                </Border.GestureRecognizers>
+                <Label Text="{x:Static st:Icon.SignOut}" Style="{StaticResource Icon}"
+                       TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+            </Border>
         </Grid>
 
-        <Label Grid.Row="2" Padding="16,8" BackgroundColor="#F8D7DA" TextColor="#842029"
-               IsVisible="{Binding HasFailed}"
-               Text="{Binding FailedCount, StringFormat='{0} kayıt gönderilemedi — internet bağlantısını kontrol edin'}" />
-
-        <RefreshView Grid.Row="3" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsRefreshing}">
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Deliveries}" SelectionMode="None">
+
+                <CollectionView.Header>
+                    <VerticalStackLayout Padding="16,14,16,4" Spacing="10">
+
+                        <!-- offline / queued / failed strip -->
+                        <Border Style="{StaticResource StripWarn}"
+                                IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Label Text="{x:Static st:Icon.CloudSlash}" FontFamily="Phosphor" FontSize="20"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Warn}, Dark={StaticResource WarnDark}}" />
+                                <Label Grid.Column="1" Text="{Binding ErrorMessage}" FontSize="13" FontFamily="InterMedium"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Warn}, Dark={StaticResource WarnDark}}" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource StripWarn}" IsVisible="{Binding HasQueued}">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                <Label Text="{x:Static st:Icon.CloudArrowUp}" FontFamily="Phosphor" FontSize="20"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Warn}, Dark={StaticResource WarnDark}}" />
+                                <Label Grid.Column="1" VerticalOptions="Center" FontSize="13" FontFamily="InterMedium"
+                                       Text="{Binding QueuedCount, StringFormat='{0} kayıt gönderilmeyi bekliyor'}"
+                                       TextColor="{AppThemeBinding Light={StaticResource Warn}, Dark={StaticResource WarnDark}}" />
+                                <Button Grid.Column="2" Text="Şimdi gönder" Style="{StaticResource PillWarn}"
+                                        Command="{Binding SyncNowCommand}" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource StripError}" IsVisible="{Binding HasFailed}">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                <Label Text="{x:Static st:Icon.WarningOctagon}" FontFamily="Phosphor" FontSize="20"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}" />
+                                <Label Grid.Column="1" VerticalOptions="Center" FontSize="13" FontFamily="InterMedium"
+                                       Text="{Binding FailedCount, StringFormat='{0} kayıt gönderilemedi'}"
+                                       TextColor="{AppThemeBinding Light={StaticResource Error}, Dark={StaticResource ErrorDark}}" />
+                                <Button Grid.Column="2" Text="Tekrar dene" Style="{StaticResource PillError}"
+                                        Command="{Binding SyncNowCommand}" />
+                            </Grid>
+                        </Border>
+
+                    </VerticalStackLayout>
+                </CollectionView.Header>
+
                 <CollectionView.EmptyView>
-                    <ContentView Padding="24">
-                        <Label Text="Bugün için atanmış teslimat yok." HorizontalOptions="Center" TextColor="Gray" />
-                    </ContentView>
+                    <VerticalStackLayout Padding="32" Spacing="12" VerticalOptions="Center" HorizontalOptions="Center">
+                        <Label Text="{x:Static st:Icon.Package}" FontFamily="Phosphor" FontSize="52"
+                               HorizontalOptions="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource Line}, Dark={StaticResource LineDark}}" />
+                        <Label Text="Bugün için atanmış teslimat yok." Style="{StaticResource Secondary}"
+                               HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
                 </CollectionView.EmptyView>
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="dto:DeliveryListItem">
-                        <Grid Padding="16,12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                            <Grid.GestureRecognizers>
+                        <Border Style="{StaticResource Card}" Margin="16,0">
+                            <Border.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, Path=BindingContext.OpenDeliveryCommand}"
                                     CommandParameter="{Binding .}" />
-                            </Grid.GestureRecognizers>
+                            </Border.GestureRecognizers>
 
-                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding OrderRef}" FontAttributes="Bold" />
-                            <Label Grid.Row="1" Grid.Column="0" Text="{Binding RecipientName}" />
-                            <Label Grid.Row="2" Grid.Column="0" Text="{Binding AddressText}" FontSize="12" TextColor="Gray" LineBreakMode="TailTruncation" />
+                            <VerticalStackLayout Spacing="7">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding OrderRef}" Style="{StaticResource Mono}" FontSize="15"
+                                           VerticalOptions="Center" />
+                                    <Border Grid.Column="1" Style="{StaticResource Badge}"
+                                            BackgroundColor="{Binding Status, Converter={StaticResource StatusTintConverter}}"
+                                            Stroke="{Binding Status, Converter={StaticResource StatusColorConverter}}">
+                                        <Label Style="{StaticResource BadgeText}"
+                                               Text="{Binding Status, Converter={StaticResource StatusLabelConverter}}"
+                                               TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
+                                    </Border>
+                                </Grid>
 
-                            <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" VerticalOptions="Center"
-                                   FontSize="12" FontAttributes="Bold"
-                                   Text="{Binding Status}"
-                                   TextColor="{Binding Status, Converter={StaticResource StatusColorConverter}}" />
-                            <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" VerticalOptions="End" HorizontalOptions="End"
-                                   Text="✓" TextColor="SeaGreen" FontSize="16"
-                                   IsVisible="{Binding HasProof}" />
-                        </Grid>
+                                <Label Text="{Binding RecipientName}" Style="{StaticResource CardTitle}" />
+                                <Label Text="{Binding AddressText}" Style="{StaticResource Secondary}"
+                                       LineBreakMode="TailTruncation" MaxLines="2" />
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" IsVisible="{Binding HasProof}"
+                                      Margin="0,3,0,0">
+                                    <Label Text="{x:Static st:Icon.CheckCircle}" FontFamily="Phosphor" FontSize="14"
+                                           VerticalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource Ok}, Dark={StaticResource OkDark}}" />
+                                    <Label Grid.Column="1" Text="Kanıt alındı" FontSize="12" FontFamily="InterMedium"
+                                           VerticalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource Ok}, Dark={StaticResource OkDark}}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="20" Color="Transparent" />
+                </CollectionView.Footer>
             </CollectionView>
         </RefreshView>
 
-        <ActivityIndicator Grid.Row="3" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-                           VerticalOptions="Start" HorizontalOptions="Center" Margin="0,16" />
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                           VerticalOptions="Start" HorizontalOptions="Center" Margin="0,20" />
     </Grid>
 </ContentPage>
