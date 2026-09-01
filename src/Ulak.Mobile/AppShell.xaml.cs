@@ -27,7 +27,19 @@ public partial class AppShell : Shell
         }
 
         _landingDone = true;
-        var target = await _tokenStore.HasSessionAsync() ? nameof(DeliveryListPage) : nameof(LoginPage);
+
+        var hasSession = false;
+        try
+        {
+            hasSession = await _tokenStore.HasSessionAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[AppShell] HasSessionAsync threw: {ex.GetType().Name}: {ex.Message}");
+        }
+
+        var target = hasSession ? nameof(DeliveryListPage) : nameof(LoginPage);
+        Console.WriteLine($"[AppShell] landing -> {target} (hasSession={hasSession})");
         await GoToAsync($"//{target}");
     }
 }

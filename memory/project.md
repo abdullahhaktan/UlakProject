@@ -6,9 +6,10 @@ _Son güncelleme: 2026-08-31_
 
 Proje adı **Ulak** oldu (Osmanlı'da atlı kurye). `rename/ulak` dalında: tüm namespace/proje/dizin,
 `Ulak.sln` / `Ulak.Backend.slnf`, docker-compose `name: ulak`, DB `Ulak`, bundle id `com.ulak.driver`.
-Backend + mobil temiz derleniyor, 22/22 unit test geçiyor.
-**Bekleyen:** dalı push + main'e merge; GitHub repo adı `LinkLogisticProject` → `ulak`;
-VPS'i yeni adla yeniden deploy (dizin hâlâ `/srv/linklogistics`); APK'yı yeniden derle + kur.
+Backend + mobil temiz derleniyor, 22/22 unit test geçiyor. main'e merge edildi,
+GitHub repo `UlakProject`, VPS `/srv/ulak` olarak yeniden deploy edildi (DB `Ulak` seed'lendi,
+tüm servisler public IP'den doğrulandı).
+**Bekleyen:** APK'yı `com.ulak.driver` ile yeniden derle + telefona kur.
 
 ## ⚡ Proje VPS'e taşındı (2026-08-29)
 
