@@ -10,7 +10,7 @@ public sealed record AppUser(
     bool IsActive)
 {
     public bool IsDriver => Role == UserRoles.Driver;
-    public bool IsOps => Role == UserRoles.Ops;
+    public bool IsAdmin => Role == UserRoles.Admin;
 }
 
 /// <summary>Row returned by <c>usp_Auth_GetUserByPhone</c>, including the stored hash.</summary>
@@ -21,7 +21,8 @@ public sealed record AppUserWithHash(
     string PasswordHash,
     string Name,
     string Role,
-    bool IsActive);
+    bool IsActive,
+    bool MustChangePassword = false);
 
 public sealed record Delivery(
     int Id,
@@ -49,7 +50,20 @@ public sealed record DriverDelivery(
     string? Note,
     string Status,
     DateTime CreatedAtUtc,
-    bool HasProof);
+    bool HasProof,
+    bool IsMine);
+
+/// <summary>Per-tenant configuration (<c>usp_Company_GetSettings</c>).</summary>
+public sealed record CompanySettings(
+    int CompanyId,
+    string DisplayName,
+    string PricingModel,
+    decimal? FlatRate,
+    decimal? PerKmRate,
+    string Currency,
+    bool RequirePhoto,
+    bool RequireSignature,
+    string? LogoObjectKey);
 
 public sealed record ProofPhotoInput(string Url, int OrderIndex);
 

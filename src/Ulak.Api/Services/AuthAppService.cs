@@ -47,7 +47,24 @@ public sealed class AuthAppService
         }
 
         var principal = new AppUser(user.Id, user.CompanyId, user.Phone, user.Name, user.Role, user.IsActive);
-        return AuthResult.Ok(await IssueTokensAsync(principal, ct));
+        return AuthResult.Ok(await IssueTokensAsync(principal, user.MustChangePassword, ct));
+    }
+
+    /// <summary>Issues a fresh session for a just-signed-up user (no password check).</summary>
+    public Task<AuthResponse> IssueForNewUserAsync(AppUser user, CancellationToken ct) =>
+        IssueTokensAsync(user, mustChangePassword: false, ct);
+
+    public async Task<bool> ChangePasswordAsync(int userId, string phone, ChangePasswordRequest request, CancellationToken ct)
+    {
+        var user = await _users.GetByPhoneAsync(phone, ct);
+        if (user is null || user.Id != userId
+            || !_passwordHasher.Verify(request.CurrentPassword, user.PasswordHash))
+        {
+            return false;
+        }
+
+        await _users.ChangePasswordAsync(userId, _passwordHasher.Hash(request.NewPassword), ct);
+        return true;
     }
 
     public async Task<AuthResult> RefreshAsync(RefreshRequest request, CancellationToken ct)
@@ -66,10 +83,10 @@ public sealed class AuthAppService
 
         // rotate: revoke the presented token, issue a fresh pair
         await _refreshTokens.RevokeAsync(hash, ct);
-        return AuthResult.Ok(await IssueTokensAsync(user, ct));
+        return AuthResult.Ok(await IssueTokensAsync(user, mustChangePassword: false, ct));
     }
 
-    private async Task<AuthResponse> IssueTokensAsync(AppUser user, CancellationToken ct)
+    private async Task<AuthResponse> IssueTokensAsync(AppUser user, bool mustChangePassword, CancellationToken ct)
     {
         var access = _tokenService.CreateAccessToken(user);
         var (refreshToken, refreshHash, refreshExpiry) = _tokenService.CreateRefreshToken();
@@ -79,6 +96,6 @@ public sealed class AuthAppService
             access.Value,
             refreshToken,
             access.ExpiresInSeconds,
-            new UserInfo(user.Id, user.Name, user.Phone, user.Role));
+            new UserInfo(user.Id, user.Name, user.Phone, user.Role, mustChangePassword));
     }
 }

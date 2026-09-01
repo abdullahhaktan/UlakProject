@@ -34,7 +34,7 @@ public sealed class AccountController : Controller
             return View(model);
         }
 
-        if (!string.Equals(auth.User.Role, "Ops", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(auth.User.Role, "Admin", StringComparison.OrdinalIgnoreCase))
         {
             model.Error = "OpsOnly";
             return View(model);

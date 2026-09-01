@@ -17,11 +17,58 @@ public sealed class UserRepository : IUserRepository
         return rows.SingleOrDefault();
     }
 
-    public async Task<IReadOnlyList<DriverLookup>> ListDriversAsync(CancellationToken ct)
+    public async Task<IReadOnlyList<DriverLookup>> ListDriversAsync(int companyId, CancellationToken ct)
     {
         using var connection = _factory.Create();
-        var rows = await connection.QueryProcAsync<DriverLookup>("dbo.usp_AppUser_ListDrivers", null, ct);
+        var rows = await connection.QueryProcAsync<DriverLookup>(
+            "dbo.usp_AppUser_ListDrivers", new { CompanyId = companyId }, ct);
         return rows.ToList();
+    }
+
+    public async Task<AppUser> SignUpCompanyAsync(
+        string companyName, string adminName, string phone, string passwordHash, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        var rows = await connection.QueryProcAsync<AppUser>(
+            "dbo.usp_Company_SignUp",
+            new { CompanyName = companyName, AdminName = adminName, Phone = phone, PasswordHash = passwordHash },
+            ct);
+        return rows.Single();
+    }
+
+    public async Task<AppUser> CreateDriverAsync(
+        int companyId, string name, string phone, string passwordHash, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        var rows = await connection.QueryProcAsync<AppUser>(
+            "dbo.usp_AppUser_CreateDriver",
+            new { CompanyId = companyId, Name = name, Phone = phone, PasswordHash = passwordHash },
+            ct);
+        return rows.Single();
+    }
+
+    public async Task ChangePasswordAsync(int userId, string newPasswordHash, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        await connection.ExecuteProcAsync(
+            "dbo.usp_Auth_ChangePassword",
+            new { UserId = userId, NewPasswordHash = newPasswordHash },
+            ct);
+    }
+}
+
+public sealed class CompanyRepository : ICompanyRepository
+{
+    private readonly IDbConnectionFactory _factory;
+
+    public CompanyRepository(IDbConnectionFactory factory) => _factory = factory;
+
+    public async Task<CompanySettings?> GetSettingsAsync(int companyId, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        var rows = await connection.QueryProcAsync<CompanySettings>(
+            "dbo.usp_Company_GetSettings", new { CompanyId = companyId }, ct);
+        return rows.SingleOrDefault();
     }
 }
 

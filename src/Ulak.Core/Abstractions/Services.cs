@@ -38,8 +38,8 @@ public sealed record PresignedUpload(string UploadUrl, string PublicUrl, string 
 public interface IProofDocumentService
 {
     /// <summary>One-page PDF: delivery info + photos + signature + GPS + timestamps.</summary>
-    Task<byte[]?> RenderProofPdfAsync(long proofId, CancellationToken ct);
+    Task<byte[]?> RenderProofPdfAsync(int companyId, long proofId, CancellationToken ct);
 
     /// <summary>Excel export of the filtered proof list for the ops panel.</summary>
-    Task<byte[]> ExportProofsXlsxAsync(ProofSearchQuery query, CancellationToken ct);
+    Task<byte[]> ExportProofsXlsxAsync(int companyId, ProofSearchQuery query, CancellationToken ct);
 }

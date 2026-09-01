@@ -1,5 +1,6 @@
 using FluentValidation;
 using Ulak.Core.Domain;
+using Ulak.Shared.Admin;
 using Ulak.Shared.Auth;
 using Ulak.Shared.Deliveries;
 
@@ -11,6 +12,35 @@ public sealed class LoginRequestValidator : AbstractValidator<LoginRequest>
     {
         RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
         RuleFor(x => x.Password).NotEmpty().MaximumLength(200);
+    }
+}
+
+public sealed class SignUpRequestValidator : AbstractValidator<SignUpRequest>
+{
+    public SignUpRequestValidator()
+    {
+        RuleFor(x => x.CompanyName).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.AdminName).NotEmpty().MaximumLength(120);
+        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.Password).NotEmpty().MinimumLength(6).MaximumLength(200);
+    }
+}
+
+public sealed class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
+{
+    public ChangePasswordRequestValidator()
+    {
+        RuleFor(x => x.CurrentPassword).NotEmpty();
+        RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(6).MaximumLength(200);
+    }
+}
+
+public sealed class CreateDriverRequestValidator : AbstractValidator<CreateDriverRequest>
+{
+    public CreateDriverRequestValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(120);
+        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
     }
 }
 

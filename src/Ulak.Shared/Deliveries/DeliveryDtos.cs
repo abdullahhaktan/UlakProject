@@ -1,6 +1,7 @@
 namespace Ulak.Shared.Deliveries;
 
-/// <summary>A delivery as seen by the assigned driver on the mobile app.</summary>
+/// <summary>A delivery as seen by a driver on the mobile app. The list covers the
+/// whole company; <see cref="IsMine"/> marks the ones assigned to the caller.</summary>
 public sealed record DeliveryListItem(
     int Id,
     string OrderRef,
@@ -12,7 +13,8 @@ public sealed record DeliveryListItem(
     string? Note,
     string Status,
     DateTime CreatedAtUtc,
-    bool HasProof);
+    bool HasProof,
+    bool IsMine);
 
 public sealed record DeliveryDetail(
     int Id,
@@ -28,7 +30,7 @@ public sealed record DeliveryDetail(
     string Status,
     DateTime CreatedAtUtc);
 
-/// <summary>Ops creates a single delivery.</summary>
+/// <summary>Admin creates a single delivery.</summary>
 public sealed record CreateDeliveryRequest(
     string OrderRef,
     string RecipientName,
@@ -37,6 +39,8 @@ public sealed record CreateDeliveryRequest(
     decimal? Lat,
     decimal? Lng,
     string? Note,
-    int? AssignedDriverId);
+    int? AssignedDriverId,
+    string? CustomerName = null,
+    decimal? AgreedPrice = null);
 
 public sealed record AssignDeliveryRequest(int DriverId);

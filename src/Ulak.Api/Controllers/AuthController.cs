@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Ulak.Api.Services;
 using Ulak.Shared.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -36,5 +37,22 @@ public sealed class AuthController : ControllerBase
         return result.Succeeded
             ? Ok(result.Response)
             : Problem(detail: result.Error, statusCode: StatusCodes.Status401Unauthorized);
+    }
+
+    /// <summary>Change the signed-in user's password (also clears the "must change" flag).</summary>
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken ct)
+    {
+        var userId = int.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub") ?? "0");
+        var phone = User.FindFirstValue(ClaimTypes.MobilePhone) ?? string.Empty;
+
+        var ok = await _auth.ChangePasswordAsync(userId, phone, request, ct);
+        return ok
+            ? NoContent()
+            : Problem(detail: "Mevcut şifre hatalı.", statusCode: StatusCodes.Status400BadRequest);
     }
 }

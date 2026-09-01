@@ -1,4 +1,3 @@
-using Dapper;
 using Ulak.Core.Abstractions;
 using Ulak.Core.Domain;
 
@@ -11,23 +10,22 @@ public sealed class DeliveryRepository : IDeliveryRepository
     public DeliveryRepository(IDbConnectionFactory factory) => _factory = factory;
 
     public async Task<IReadOnlyList<DriverDelivery>> ListForDriverAsync(
-        int driverId, DateOnly? date, CancellationToken ct)
+        int companyId, int driverId, CancellationToken ct)
     {
         using var connection = _factory.Create();
         var rows = await connection.QueryProcAsync<DriverDelivery>(
             "dbo.usp_Delivery_ListForDriver",
-            new { DriverId = driverId, Date = ToDate(date) },
+            new { CompanyId = companyId, DriverId = driverId },
             ct);
         return rows.ToList();
     }
 
-    public async Task<Delivery?> GetByIdAsync(
-        int id, int requestingUserId, string role, CancellationToken ct)
+    public async Task<Delivery?> GetByIdAsync(int companyId, int id, CancellationToken ct)
     {
         using var connection = _factory.Create();
         var rows = await connection.QueryProcAsync<Delivery>(
             "dbo.usp_Delivery_GetById",
-            new { Id = id, RequestingUserId = requestingUserId, Role = role },
+            new { CompanyId = companyId, Id = id },
             ct);
         return rows.SingleOrDefault();
     }
@@ -48,28 +46,31 @@ public sealed class DeliveryRepository : IDeliveryRepository
                 input.Lng,
                 input.Note,
                 input.AssignedDriverId,
+                input.CustomerName,
+                input.AgreedPrice,
             },
             ct);
         return (int)rows.Single();
     }
 
-    public async Task AssignAsync(int deliveryId, int driverId, CancellationToken ct)
+    public async Task AssignAsync(int companyId, int deliveryId, int driverId, CancellationToken ct)
     {
         using var connection = _factory.Create();
         await connection.ExecuteProcAsync(
             "dbo.usp_Delivery_Assign",
-            new { DeliveryId = deliveryId, DriverId = driverId },
+            new { CompanyId = companyId, DeliveryId = deliveryId, DriverId = driverId },
             ct);
     }
 
     public async Task<PagedResult<AdminDeliveryRow>> AdminSearchAsync(
-        DeliverySearchQuery query, CancellationToken ct)
+        int companyId, DeliverySearchQuery query, CancellationToken ct)
     {
         using var connection = _factory.Create();
         using var multi = await connection.QueryMultipleProcAsync(
             "dbo.usp_Delivery_AdminSearch",
             new
             {
+                CompanyId = companyId,
                 query.Search,
                 query.Status,
                 query.DriverId,
