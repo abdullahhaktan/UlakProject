@@ -84,6 +84,20 @@
                         </VerticalStackLayout>
                     </Border>
 
+                    <!-- teammate's delivery: read-only -->
+                    <Border Style="{StaticResource Strip}" IsVisible="{Binding IsTeammateDelivery}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Line}, Dark={StaticResource LineDark}}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Text="{x:Static st:Icon.Package}" FontFamily="Phosphor" FontSize="18"
+                                   VerticalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+                            <Label Grid.Column="1" VerticalOptions="Center" FontSize="13"
+                                   Text="Bu teslimat başka bir sürücüye atanmış — yalnızca görüntüleyebilirsin."
+                                   TextColor="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+                        </Grid>
+                    </Border>
+
                     <!-- note -->
                     <Border Style="{StaticResource StripWarn}"
                             IsVisible="{Binding Delivery.Note, Converter={StaticResource IsNotNullConverter}}">
@@ -102,7 +116,7 @@
         <!-- bottom CTA -->
         <Border Grid.Row="2" Padding="16,12,16,26" Stroke="Transparent"
                 BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}"
-                IsVisible="{Binding Delivery, Converter={StaticResource IsNotNullConverter}}">
+                IsVisible="{Binding CanCaptureProof}">
             <Button Text="Teslimat kanıtı oluştur"
                     Command="{Binding CaptureProofCommand}"
                     ContentLayout="Left,8">

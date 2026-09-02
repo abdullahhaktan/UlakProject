@@ -27,7 +27,21 @@ public sealed partial class DeliveryListViewModel : BaseViewModel
         _queue.Changed += async (_, _) => await MainThread.InvokeOnMainThreadAsync(RefreshQueueBadgeAsync);
     }
 
+    private List<DeliveryListItem> _all = [];
+
     public ObservableCollection<DeliveryListItem> Deliveries { get; } = [];
+
+    /// <summary>false = only the deliveries assigned to me, true = the whole team's.</summary>
+    [ObservableProperty]
+    private bool _teamView;
+
+    [ObservableProperty]
+    private int _mineCount;
+
+    [ObservableProperty]
+    private int _teamCount;
+
+    partial void OnTeamViewChanged(bool value) => ApplyFilter();
 
     [ObservableProperty]
     private string _driverName = string.Empty;
@@ -101,12 +115,24 @@ public sealed partial class DeliveryListViewModel : BaseViewModel
 
     private void Fill(IEnumerable<DeliveryListItem> items)
     {
+        _all = items.ToList();
+        MineCount = _all.Count(d => d.IsMine);
+        TeamCount = _all.Count;
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        var shown = TeamView ? _all : _all.Where(d => d.IsMine);
         Deliveries.Clear();
-        foreach (var item in items)
+        foreach (var item in shown)
         {
             Deliveries.Add(item);
         }
     }
+
+    [RelayCommand]
+    private void SetView(string mode) => TeamView = mode == "team";
 
     private async Task RefreshQueueBadgeAsync()
     {
@@ -122,7 +148,8 @@ public sealed partial class DeliveryListViewModel : BaseViewModel
     {
         if (delivery is not null)
         {
-            await Shell.Current.GoToAsync($"{nameof(DeliveryDetailPage)}?id={delivery.Id}");
+            await Shell.Current.GoToAsync(
+                $"{nameof(DeliveryDetailPage)}?id={delivery.Id}&mine={delivery.IsMine}");
         }
     }
 

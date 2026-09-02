@@ -43,6 +43,68 @@
                 <CollectionView.Header>
                     <VerticalStackLayout Padding="16,14,16,4" Spacing="10">
 
+                        <!-- mine / team segmented filter -->
+                        <Border Padding="3" StrokeThickness="1"
+                                Stroke="{AppThemeBinding Light={StaticResource Line}, Dark={StaticResource LineDark}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="11" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="3">
+                                <Border Grid.Column="0" Padding="0,8" StrokeThickness="0" BackgroundColor="Transparent">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SetViewCommand}" CommandParameter="mine" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding TeamView}" Value="False">
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{AppThemeBinding Light={StaticResource AccentTint}, Dark={StaticResource AccentTintDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label HorizontalOptions="Center" FontFamily="InterSemiBold" FontSize="13.5"
+                                           Text="{Binding MineCount, StringFormat='Benim · {0}'}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding TeamView}" Value="False">
+                                                <Setter Property="TextColor"
+                                                        Value="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding TeamView}" Value="True">
+                                                <Setter Property="TextColor"
+                                                        Value="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                                <Border Grid.Column="1" Padding="0,8" StrokeThickness="0" BackgroundColor="Transparent">
+                                    <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SetViewCommand}" CommandParameter="team" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding TeamView}" Value="True">
+                                            <Setter Property="BackgroundColor"
+                                                    Value="{AppThemeBinding Light={StaticResource AccentTint}, Dark={StaticResource AccentTintDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label HorizontalOptions="Center" FontFamily="InterSemiBold" FontSize="13.5"
+                                           Text="{Binding TeamCount, StringFormat='Ekip · {0}'}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding TeamView}" Value="True">
+                                                <Setter Property="TextColor"
+                                                        Value="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Label" Binding="{Binding TeamView}" Value="False">
+                                                <Setter Property="TextColor"
+                                                        Value="{AppThemeBinding Light={StaticResource Muted}, Dark={StaticResource MutedDark}}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+
                         <!-- offline / queued / failed strip -->
                         <Border Style="{StaticResource StripWarn}"
                                 IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}">
@@ -90,7 +152,7 @@
                         <Label Text="{x:Static st:Icon.Package}" FontFamily="Phosphor" FontSize="52"
                                HorizontalOptions="Center"
                                TextColor="{AppThemeBinding Light={StaticResource Line}, Dark={StaticResource LineDark}}" />
-                        <Label Text="Bugün için atanmış teslimat yok." Style="{StaticResource Secondary}"
+                        <Label Text="Bu görünümde teslimat yok. Diğer sekmeyi de kontrol et." Style="{StaticResource Secondary}"
                                HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
