@@ -22,8 +22,30 @@ public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttri
     [ObservableProperty]
     private DeliveryDetail? _delivery;
 
+    /// <summary>The delivery is assigned to the signed-in driver (only then can they capture proof).</summary>
+    [ObservableProperty]
+    private bool _isMine = true;
+
+    public bool IsTeammateDelivery => !IsMine;
+
+    /// <summary>The proof-capture CTA shows only for a loaded delivery that's mine.</summary>
+    public bool CanCaptureProof => Delivery is not null && IsMine;
+
+    partial void OnIsMineChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsTeammateDelivery));
+        OnPropertyChanged(nameof(CanCaptureProof));
+    }
+
+    partial void OnDeliveryChanged(DeliveryDetail? value) => OnPropertyChanged(nameof(CanCaptureProof));
+
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        if (query.TryGetValue("mine", out var mineRaw) && bool.TryParse(mineRaw?.ToString(), out var mine))
+        {
+            IsMine = mine;
+        }
+
         if (query.TryGetValue("id", out var raw) && int.TryParse(raw?.ToString(), out var id))
         {
             DeliveryId = id;
@@ -71,12 +93,11 @@ public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttri
     [RelayCommand]
     private async Task CaptureProofAsync()
     {
-        if (Delivery is null)
+        if (Delivery is null || !IsMine)
         {
             return;
         }
 
-        // ProofCapturePage is added in step 7.
         await Shell.Current.GoToAsync($"ProofCapturePage?id={Delivery.Id}");
     }
 
