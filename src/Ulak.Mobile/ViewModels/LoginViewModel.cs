@@ -8,10 +8,12 @@ namespace Ulak.Mobile.ViewModels;
 public sealed partial class LoginViewModel : BaseViewModel
 {
     private readonly ApiClient _api;
+    private readonly PendingCredential _pending;
 
-    public LoginViewModel(ApiClient api)
+    public LoginViewModel(ApiClient api, PendingCredential pending)
     {
         _api = api;
+        _pending = pending;
         _apiBaseUrl = AppConfig.ApiBaseUrl;
     }
 
@@ -45,7 +47,15 @@ public sealed partial class LoginViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            await _api.LoginAsync(Phone.Trim(), Password, CancellationToken.None);
+            var auth = await _api.LoginAsync(Phone.Trim(), Password, CancellationToken.None);
+
+            if (auth.User.MustChangePassword)
+            {
+                _pending.Set(Phone.Trim(), Password);
+                await Shell.Current.GoToAsync($"//{nameof(ChangePasswordPage)}");
+                return;
+            }
+
             await Shell.Current.GoToAsync($"//{nameof(DeliveryListPage)}");
         }
         catch (ApiException ex)

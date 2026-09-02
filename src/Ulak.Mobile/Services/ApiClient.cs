@@ -39,8 +39,17 @@ public sealed class ApiClient
         response.EnsureSuccessStatusCode();
         var auth = await response.Content.ReadFromJsonAsync<AuthResponse>(cancellationToken: ct)
                    ?? throw new ApiException(500, "Sunucu yanıtı boş.");
-        await _tokenStore.SaveAsync(auth.AccessToken, auth.RefreshToken, auth.User.Id, auth.User.Name);
+        await _tokenStore.SaveAsync(
+            auth.AccessToken, auth.RefreshToken, auth.User.Id, auth.User.Name, auth.User.MustChangePassword);
         return auth;
+    }
+
+    /// <summary>Changes the signed-in user's password and clears the "must change" flag server-side.</summary>
+    public async Task ChangePasswordAsync(string currentPassword, string newPassword, CancellationToken ct)
+    {
+        var response = await _http.PostAsJsonAsync(
+            Url("auth/change-password"), new ChangePasswordRequest(currentPassword, newPassword), ct);
+        await ThrowIfProblem(response);
     }
 
     public async Task<IReadOnlyList<DeliveryListItem>> GetTodayDeliveriesAsync(CancellationToken ct)

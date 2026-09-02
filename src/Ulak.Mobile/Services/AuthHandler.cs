@@ -76,7 +76,8 @@ public sealed class AuthHandler : DelegatingHandler
                 return null;
             }
 
-            await _tokenStore.SaveAsync(auth.AccessToken, auth.RefreshToken, auth.User.Id, auth.User.Name);
+            await _tokenStore.SaveAsync(
+                auth.AccessToken, auth.RefreshToken, auth.User.Id, auth.User.Name, auth.User.MustChangePassword);
             return auth.AccessToken;
         }
         catch

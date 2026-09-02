@@ -29,17 +29,24 @@ public partial class AppShell : Shell
         _landingDone = true;
 
         var hasSession = false;
+        var mustChangePassword = false;
         try
         {
             hasSession = await _tokenStore.HasSessionAsync();
+            if (hasSession)
+            {
+                mustChangePassword = await _tokenStore.MustChangePasswordAsync();
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[AppShell] HasSessionAsync threw: {ex.GetType().Name}: {ex.Message}");
+            Console.WriteLine($"[AppShell] session check threw: {ex.GetType().Name}: {ex.Message}");
         }
 
-        var target = hasSession ? nameof(DeliveryListPage) : nameof(LoginPage);
-        Console.WriteLine($"[AppShell] landing -> {target} (hasSession={hasSession})");
+        var target = !hasSession
+            ? nameof(LoginPage)
+            : mustChangePassword ? nameof(ChangePasswordPage) : nameof(DeliveryListPage);
+        Console.WriteLine($"[AppShell] landing -> {target} (hasSession={hasSession}, mustChangePassword={mustChangePassword})");
         await GoToAsync($"//{target}");
     }
 }
