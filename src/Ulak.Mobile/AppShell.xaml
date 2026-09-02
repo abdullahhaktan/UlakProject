@@ -11,6 +11,10 @@
         ContentTemplate="{DataTemplate views:LoginPage}" />
 
     <ShellContent
+        Route="ChangePasswordPage"
+        ContentTemplate="{DataTemplate views:ChangePasswordPage}" />
+
+    <ShellContent
         Route="DeliveryListPage"
         ContentTemplate="{DataTemplate views:DeliveryListPage}" />
 

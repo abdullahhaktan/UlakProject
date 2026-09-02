@@ -16,13 +16,16 @@ public sealed class TokenStore
     private const string RefreshKey = "ll_refresh_token";
     private const string UserNameKey = "ll_user_name";
     private const string UserIdKey = "ll_user_id";
+    private const string MustChangePwKey = "ll_must_change_pw";
 
-    public async Task SaveAsync(string accessToken, string refreshToken, int userId, string userName)
+    public async Task SaveAsync(
+        string accessToken, string refreshToken, int userId, string userName, bool mustChangePassword = false)
     {
         await SetAsync(AccessKey, accessToken);
         await SetAsync(RefreshKey, refreshToken);
         await SetAsync(UserNameKey, userName);
         await SetAsync(UserIdKey, userId.ToString());
+        await SetAsync(MustChangePwKey, mustChangePassword ? "1" : "0");
     }
 
     public Task<string?> GetAccessTokenAsync() => GetAsync(AccessKey);
@@ -37,9 +40,15 @@ public sealed class TokenStore
     public async Task<bool> HasSessionAsync() =>
         !string.IsNullOrEmpty(await GetRefreshTokenAsync());
 
+    /// <summary>True when the driver logged in with a temp password and hasn't set their own yet.</summary>
+    public async Task<bool> MustChangePasswordAsync() =>
+        await GetAsync(MustChangePwKey) == "1";
+
+    public Task ClearMustChangePasswordAsync() => SetAsync(MustChangePwKey, "0");
+
     public void Clear()
     {
-        foreach (var key in new[] { AccessKey, RefreshKey, UserNameKey, UserIdKey })
+        foreach (var key in new[] { AccessKey, RefreshKey, UserNameKey, UserIdKey, MustChangePwKey })
         {
             try { SecureStorage.Remove(key); } catch (Exception ex) { Log(nameof(Clear), key, ex); }
             Preferences.Remove(key);

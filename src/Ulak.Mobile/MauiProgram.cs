@@ -33,6 +33,7 @@ public static class MauiProgram
 
         // --- app services ---
         builder.Services.AddSingleton<TokenStore>();
+        builder.Services.AddSingleton<PendingCredential>();
         builder.Services.AddSingleton<AuthHandler>();
         builder.Services.AddSingleton(sp =>
         {
@@ -53,6 +54,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<ChangePasswordPage>();
+        builder.Services.AddTransient<ChangePasswordViewModel>();
         builder.Services.AddTransient<DeliveryListPage>();
         builder.Services.AddTransient<DeliveryListViewModel>();
         builder.Services.AddTransient<DeliveryDetailPage>();
