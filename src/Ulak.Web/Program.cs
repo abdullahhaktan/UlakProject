@@ -1,8 +1,11 @@
 using System.Globalization;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Ulak.Web.Api;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.WebEncoders;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +19,12 @@ var apiOptions = builder.Configuration.GetSection(ApiClientOptions.SectionName).
 var supportedCultures = builder.Configuration.GetSection("Localization:SupportedCultures").Get<string[]>()
                         ?? ["tr", "en"];
 var defaultCulture = builder.Configuration["Localization:DefaultCulture"] ?? "tr";
+
+// Let the HTML encoder emit Turkish/Spanish letters as-is instead of &#x131; etc.
+// (the default encoder escapes everything outside Basic Latin, which then
+// double-encodes when a localized string is dropped into a JS literal).
+builder.Services.Configure<WebEncoderOptions>(options =>
+    options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
 
 // --- localization (TR / EN / ES via .resx) ---
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

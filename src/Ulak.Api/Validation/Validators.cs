@@ -1,5 +1,6 @@
 using FluentValidation;
 using Ulak.Core.Domain;
+using Ulak.Shared;
 using Ulak.Shared.Admin;
 using Ulak.Shared.Auth;
 using Ulak.Shared.Deliveries;
@@ -21,7 +22,8 @@ public sealed class SignUpRequestValidator : AbstractValidator<SignUpRequest>
     {
         RuleFor(x => x.CompanyName).NotEmpty().MaximumLength(200);
         RuleFor(x => x.AdminName).NotEmpty().MaximumLength(120);
-        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20)
+            .Must(PhoneNumber.IsValid).WithMessage("Geçerli bir telefon numarası girin.");
         RuleFor(x => x.Password).NotEmpty().MinimumLength(6).MaximumLength(200);
     }
 }
@@ -40,7 +42,18 @@ public sealed class CreateDriverRequestValidator : AbstractValidator<CreateDrive
     public CreateDriverRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(120);
-        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20)
+            .Must(PhoneNumber.IsValid).WithMessage("Geçerli bir telefon numarası girin.");
+    }
+}
+
+public sealed class UpdateDriverRequestValidator : AbstractValidator<UpdateDriverRequest>
+{
+    public UpdateDriverRequestValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(120);
+        RuleFor(x => x.Phone).NotEmpty().MaximumLength(20)
+            .Must(PhoneNumber.IsValid).WithMessage("Geçerli bir telefon numarası girin.");
     }
 }
 

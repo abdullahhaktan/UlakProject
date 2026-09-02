@@ -32,7 +32,7 @@ public sealed class SignupController : ControllerBase
         var admin = await _users.SignUpCompanyAsync(
             request.CompanyName.Trim(),
             request.AdminName.Trim(),
-            request.Phone.Trim(),
+            Ulak.Shared.PhoneNumber.Normalize(request.Phone) ?? request.Phone.Trim(),
             _passwordHasher.Hash(request.Password),
             ct);
 

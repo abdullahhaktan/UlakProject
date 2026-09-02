@@ -59,7 +59,12 @@
             <div id="new-error" class="alert alert-danger hidden"></div>
             <label class="field-block"><span>@L["Delivery_OrderRef"]</span><input id="n-orderRef" /></label>
             <label class="field-block"><span>@L["Delivery_Recipient"]</span><input id="n-recipientName" /></label>
-            <label class="field-block"><span>@L["Delivery_Phone"]</span><input id="n-recipientPhone" /></label>
+            <label class="field-block"><span>@L["Delivery_Phone"]</span>
+                <div class="phone-input" id="n-recipientPhone">
+                    <input class="phone-cc" inputmode="tel" />
+                    <input class="phone-nat" inputmode="numeric" placeholder="5xx xxx xx xx" />
+                </div>
+            </label>
             <label class="field-block"><span>@L["Delivery_Address"]</span><textarea id="n-addressText" rows="2"></textarea></label>
             <label class="field-block"><span>@L["Delivery_Note"]</span><input id="n-note" /></label>
             <label class="field-block"><span>@L["Common_Driver"]</span><select id="n-driver"><option value="">—</option></select></label>
@@ -151,7 +156,8 @@
             var modal = Ulak.modal('modal-new');
             document.getElementById('btn-new').addEventListener('click', function () {
                 document.getElementById('new-error').classList.add('hidden');
-                ['n-orderRef', 'n-recipientName', 'n-recipientPhone', 'n-addressText', 'n-note'].forEach(function (id) { document.getElementById(id).value = ''; });
+                ['n-orderRef', 'n-recipientName', 'n-addressText', 'n-note'].forEach(function (id) { document.getElementById(id).value = ''; });
+                document.querySelector('#n-recipientPhone .phone-nat').value = '';
                 document.getElementById('n-driver').value = '';
                 modal.open();
             });
@@ -159,7 +165,7 @@
                 var body = {
                     orderRef: document.getElementById('n-orderRef').value,
                     recipientName: document.getElementById('n-recipientName').value,
-                    recipientPhone: document.getElementById('n-recipientPhone').value || null,
+                    recipientPhone: Ulak.phoneValue(document.getElementById('n-recipientPhone')) || null,
                     addressText: document.getElementById('n-addressText').value,
                     note: document.getElementById('n-note').value || null,
                     assignedDriverId: document.getElementById('n-driver').value ? parseInt(document.getElementById('n-driver').value, 10) : null

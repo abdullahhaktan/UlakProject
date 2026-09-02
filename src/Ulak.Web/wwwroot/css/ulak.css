@@ -225,6 +225,10 @@ table.data tbody tr.is-clickable{cursor:pointer;}
 .cell-empty{text-align:center; color:var(--ink-500); padding:32px 14px !important;}
 .driver-name{display:flex; align-items:center; gap:8px;}
 .driver-name .dot{width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none;}
+table.data tr.row-inactive td{color:var(--ink-300);}
+table.data tr.row-inactive .driver-name .dot{background:var(--ink-300);}
+.row-actions{display:flex; gap:14px; white-space:nowrap;}
+.row-actions .link-btn{font-size:12.5px;}
 
 .pill{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-cond); font-size:11px; font-weight:600; letter-spacing:.02em; padding:3px 9px; border-radius:999px;}
 .pill svg{width:10px; height:10px;}
@@ -262,11 +266,13 @@ table.data tbody tr.is-clickable{cursor:pointer;}
 .field-block > span{font-family:var(--font-cond); font-size:11.5px; font-weight:600; color:var(--ink-700);}
 .field-block input, .field-block textarea, .field-block select{border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:9px 11px; font-size:13.5px; background:var(--surface); color:var(--ink-900);}
 .field-block input:focus, .field-block textarea:focus, .field-block select:focus{border-color:var(--accent); outline:none;}
-.phone-input{display:flex; align-items:stretch; border:1px solid var(--line-strong); border-radius:var(--r-sm); overflow:hidden;}
+.phone-input{display:flex; align-items:stretch; border:1px solid var(--line-strong); border-radius:var(--r-sm); overflow:hidden; background:var(--surface);}
 .phone-input:focus-within{border-color:var(--accent);}
 .phone-prefix{background:var(--surface-2); color:var(--ink-500); font-family:var(--font-mono); font-size:13px; padding:9px 10px; border-right:1px solid var(--line-strong); flex:none; display:flex; align-items:center;}
-.phone-input input{border:none; flex:1; padding:9px 11px; font-size:13.5px; font-family:var(--font-mono); background:var(--surface); color:var(--ink-900);}
+.phone-input input{border:none; padding:9px 11px; font-size:13.5px; font-family:var(--font-mono); background:var(--surface); color:var(--ink-900);}
 .phone-input input:focus{outline:none;}
+.phone-input .phone-cc{width:62px; flex:none; text-align:center; background:var(--surface-2); color:var(--ink-700); border-right:1px solid var(--line-strong);}
+.phone-input .phone-nat{flex:1; min-width:0;}
 .modal-foot{display:flex; justify-content:flex-end; gap:8px; padding:14px 18px; border-top:1px solid var(--line);}
 .temp-pass{font-family:var(--font-mono); font-size:18px; font-weight:600; background:var(--accent-tint); color:var(--accent); padding:8px 12px; border-radius:var(--r-sm); text-align:center; letter-spacing:.05em;}
 

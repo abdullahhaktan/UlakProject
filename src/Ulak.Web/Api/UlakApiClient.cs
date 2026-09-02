@@ -58,8 +58,23 @@ public sealed class UlakApiClient
         _http.GetFromJsonAsync<PagedResponse<AdminDeliveryRow>>(
             "admin/deliveries" + ToQueryString(query), ct);
 
-    public Task<IReadOnlyList<DriverOption>?> GetDriversAsync(CancellationToken ct) =>
-        _http.GetFromJsonAsync<IReadOnlyList<DriverOption>>("admin/drivers", ct);
+    public Task<IReadOnlyList<DriverListItem>?> GetDriversAsync(bool includeInactive, CancellationToken ct) =>
+        _http.GetFromJsonAsync<IReadOnlyList<DriverListItem>>(
+            "admin/drivers" + (includeInactive ? "?include_inactive=true" : ""), ct);
+
+    public async Task<DriverListItem> UpdateDriverAsync(int id, UpdateDriverRequest request, CancellationToken ct)
+    {
+        var response = await _http.PutAsJsonAsync($"admin/drivers/{id}", request, ct);
+        await ThrowIfProblem(response);
+        return (await response.Content.ReadFromJsonAsync<DriverListItem>(cancellationToken: ct))!;
+    }
+
+    public async Task SetDriverActiveAsync(int id, bool isActive, CancellationToken ct)
+    {
+        var response = await _http.PostAsJsonAsync(
+            $"admin/drivers/{id}/active", new SetDriverActiveRequest(isActive), ct);
+        await ThrowIfProblem(response);
+    }
 
     public Task<DashboardSummaryDto?> GetDashboardAsync(CancellationToken ct) =>
         _http.GetFromJsonAsync<DashboardSummaryDto>("admin/dashboard", ct);

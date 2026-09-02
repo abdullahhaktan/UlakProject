@@ -23,7 +23,11 @@
             <input type="hidden" asp-for="ReturnUrl" />
             <label class="field-block">
                 <span>@L["Login_Phone"]</span>
-                <input asp-for="Phone" autocomplete="username" placeholder="+9055..." />
+                <div class="phone-input">
+                    <input class="phone-cc" inputmode="tel" aria-label="@L["Phone_CountryCode"]" />
+                    <input class="phone-nat" inputmode="numeric" autocomplete="tel-national" placeholder="5xx xxx xx xx" />
+                    <input type="hidden" asp-for="Phone" class="phone-full" autocomplete="username" />
+                </div>
                 <span asp-validation-for="Phone" class="field-error"></span>
             </label>
             <label class="field-block">

@@ -25,6 +25,8 @@ public sealed class SqlErrorExceptionHandler : IExceptionHandler
         [50024] = StatusCodes.Status400BadRequest, // too many photos
         [50030] = StatusCodes.Status409Conflict,   // sign-up phone already registered
         [50031] = StatusCodes.Status409Conflict,   // create-driver phone already registered
+        [50032] = StatusCodes.Status409Conflict,   // update-driver phone already registered
+        [50033] = StatusCodes.Status404NotFound,   // driver not found in this company
     };
 
     private readonly ILogger<SqlErrorExceptionHandler> _logger;

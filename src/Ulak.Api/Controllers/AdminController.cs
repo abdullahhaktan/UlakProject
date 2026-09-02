@@ -68,11 +68,13 @@ public sealed class AdminController : ControllerBase
     }
 
     [HttpGet("drivers")]
-    [ProducesResponseType<IReadOnlyList<Dto.DriverOption>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Drivers(CancellationToken ct)
+    [ProducesResponseType<IReadOnlyList<Dto.DriverListItem>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Drivers(
+        [FromQuery(Name = "include_inactive")] bool includeInactive = false,
+        CancellationToken ct = default)
     {
-        var drivers = await _users.ListDriversAsync(_currentUser.CompanyId, ct);
-        return Ok(drivers.Select(d => new Dto.DriverOption(d.Id, d.Name, d.Phone)));
+        var drivers = await _users.ListDriversAsync(_currentUser.CompanyId, includeInactive, ct);
+        return Ok(drivers.Select(d => new Dto.DriverListItem(d.Id, d.Name, d.Phone, d.IsActive, d.OpenDeliveries)));
     }
 
     /// <summary>Admin adds a driver to their own company. The temp password is returned once.</summary>
@@ -85,12 +87,37 @@ public sealed class AdminController : ControllerBase
         var driver = await _users.CreateDriverAsync(
             _currentUser.CompanyId,
             request.Name.Trim(),
-            request.Phone.Trim(),
+            Ulak.Shared.PhoneNumber.Normalize(request.Phone) ?? request.Phone.Trim(),
             _passwordHasher.Hash(tempPassword),
             ct);
 
         return CreatedAtAction(nameof(Drivers), null,
             new Dto.CreateDriverResponse(driver.Id, driver.Name, driver.Phone, tempPassword));
+    }
+
+    /// <summary>Admin edits one of their drivers (name + phone).</summary>
+    [HttpPut("drivers/{id:int}")]
+    [ProducesResponseType<Dto.DriverListItem>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdateDriver(int id, [FromBody] Dto.UpdateDriverRequest request, CancellationToken ct)
+    {
+        var driver = await _users.UpdateDriverAsync(
+            _currentUser.CompanyId,
+            id,
+            request.Name.Trim(),
+            Ulak.Shared.PhoneNumber.Normalize(request.Phone) ?? request.Phone.Trim(),
+            ct);
+
+        return Ok(new Dto.DriverListItem(driver.Id, driver.Name, driver.Phone, driver.IsActive, 0));
+    }
+
+    /// <summary>Admin activates / deactivates one of their drivers.</summary>
+    [HttpPost("drivers/{id:int}/active")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> SetDriverActive(int id, [FromBody] Dto.SetDriverActiveRequest request, CancellationToken ct)
+    {
+        await _users.SetDriverActiveAsync(_currentUser.CompanyId, id, request.IsActive, ct);
+        return NoContent();
     }
 
     [HttpGet("dashboard")]

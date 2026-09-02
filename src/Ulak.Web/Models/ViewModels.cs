@@ -44,6 +44,12 @@ public sealed class SignUpViewModel
     public string? Error { get; set; }
 }
 
+public sealed class DriversViewModel
+{
+    public IReadOnlyList<Ulak.Shared.Admin.DriverListItem> Drivers { get; init; } = [];
+    public bool ShowInactive { get; init; }
+}
+
 public sealed class ErrorViewModel
 {
     public string? RequestId { get; set; }
