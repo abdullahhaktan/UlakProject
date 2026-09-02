@@ -25,7 +25,7 @@ Artık geliştirme + deploy **Cloud VPS** üzerinde: `ssh hub-vps` → `cd /srv/
 - Detay: `~/.claude/.../memory/hub-vps.md`.
 
 Windows'taki lokal Docker stack hâlâ ayakta olabilir — artık gerekmiyor,
-`cd logistic && docker compose down` ile kapatılabilir.
+`cd Ulak && docker compose down` ile kapatılabilir.
 
 ---
 
@@ -92,7 +92,7 @@ PC güncel Wi-Fi IP: `192.168.31.234`. Firewall engel değil; risk router AP iso
 
 ## 3. Servisler nasıl çalışır
 
-### Backend (Docker Compose) — `C:\Users\abdullahhaktan\source\Claude\logistic`
+### Backend (Docker Compose) — `C:\Users\abdullahhaktan\source\Claude\Ulak`
 
 ```bash
 docker compose up -d                      # tüm stack

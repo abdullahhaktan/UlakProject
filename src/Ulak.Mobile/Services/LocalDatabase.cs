@@ -80,6 +80,20 @@ public sealed class LocalDatabase
             .ToListAsync();
     }
 
+    /// <summary>
+    /// A delivery proof must not be sent while its pickup proof is still queued
+    /// on this device — the API rejects it (THROW 50025) as a permanent 409.
+    /// </summary>
+    public async Task<bool> HasUnsyncedPickupAsync(int deliveryId)
+    {
+        var db = await GetConnectionAsync();
+        return await db.Table<PendingProof>()
+            .Where(p => p.DeliveryId == deliveryId
+                        && p.ProofType == "Pickup"
+                        && p.State != SyncState.Synced)
+            .CountAsync() > 0;
+    }
+
     public async Task<List<PendingPhoto>> GetPhotosAsync(int pendingProofId)
     {
         var db = await GetConnectionAsync();

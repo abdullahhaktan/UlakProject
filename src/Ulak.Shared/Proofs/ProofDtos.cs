@@ -9,20 +9,22 @@ namespace Ulak.Shared.Proofs;
 public sealed record CreateProofRequest(
     Guid ClientUuid,
     int DeliveryId,
-    string Status,               // Delivered | Failed
+    string Status,                 // Pickup: PickedUp | Failed   Delivery: Delivered | Failed
     string? FailureReason,
     string? RecipientSignedName,
     string? SignatureUrl,
     IReadOnlyList<string> PhotoUrls,
     decimal? CapturedLat,
     decimal? CapturedLng,
-    DateTimeOffset CapturedAt);
+    DateTimeOffset CapturedAt,
+    string ProofType = "Delivery");   // Pickup | Delivery
 
 public sealed record CreateProofResponse(
     long Id,
     int DeliveryId,
     string Status,
-    bool WasDuplicate);
+    bool WasDuplicate,
+    string ProofType = "Delivery");
 
 // --- ops panel views ---
 
@@ -31,6 +33,7 @@ public sealed record ProofListItem(
     int DeliveryId,
     string OrderRef,
     string RecipientName,
+    string ProofType,
     string Status,
     string? FailureReason,
     int DriverId,
@@ -48,6 +51,7 @@ public sealed record ProofDetail(
     string AddressText,
     decimal? DeliveryLat,
     decimal? DeliveryLng,
+    string ProofType,
     string Status,
     string? FailureReason,
     string? RecipientSignedName,

@@ -46,6 +46,7 @@ public sealed class AdminProofsController : ControllerBase
         [FromQuery(Name = "to")] string? to,
         [FromQuery(Name = "driver_id")] int? driverId,
         [FromQuery] string? status,
+        [FromQuery(Name = "proof_type")] string? proofType,
         [FromQuery] string? search,
         [FromQuery] string sort = "CapturedAtUtc",
         [FromQuery] string dir = "DESC",
@@ -58,6 +59,7 @@ public sealed class AdminProofsController : ControllerBase
             ParseDate(to),
             driverId,
             NormalizeStatus(status),
+            NormalizeProofType(proofType),
             string.IsNullOrWhiteSpace(search) ? null : search.Trim(),
             SortableColumns.Contains(sort) ? sort : "CapturedAtUtc",
             dir.Equals("ASC", StringComparison.OrdinalIgnoreCase) ? "ASC" : "DESC",
@@ -66,7 +68,7 @@ public sealed class AdminProofsController : ControllerBase
 
         var page = await _proofs.AdminSearchAsync(_currentUser.CompanyId, query, ct);
         var items = page.Items.Select(r => new ProofListItem(
-            r.Id, r.DeliveryId, r.OrderRef, r.RecipientName, r.Status, r.FailureReason,
+            r.Id, r.DeliveryId, r.OrderRef, r.RecipientName, r.ProofType, r.Status, r.FailureReason,
             r.DriverId, r.DriverName, r.PhotoCount, r.CapturedAtUtc, r.SyncedAtUtc)).ToList();
 
         return Ok(new PagedProofs(items, page.TotalCount));
@@ -94,7 +96,8 @@ public sealed class AdminProofsController : ControllerBase
 
         return Ok(new ProofDetail(
             detail.Id, detail.DeliveryId, detail.OrderRef, detail.RecipientName, detail.RecipientPhone,
-            detail.AddressText, detail.DeliveryLat, detail.DeliveryLng, detail.Status, detail.FailureReason,
+            detail.AddressText, detail.DeliveryLat, detail.DeliveryLng, detail.ProofType, detail.Status,
+            detail.FailureReason,
             detail.RecipientSignedName, signatureUrl, detail.CapturedLat, detail.CapturedLng,
             detail.CapturedAtUtc, detail.SyncedAtUtc, detail.DriverId, detail.DriverName, detail.DriverPhone,
             photos));
@@ -120,7 +123,7 @@ public sealed class AdminProofsController : ControllerBase
         CancellationToken ct = default)
     {
         var query = new ProofSearchQuery(
-            ParseDate(from), ParseDate(to), driverId, NormalizeStatus(status),
+            ParseDate(from), ParseDate(to), driverId, NormalizeStatus(status), null,
             string.IsNullOrWhiteSpace(search) ? null : search.Trim(),
             "CapturedAtUtc", "DESC", 0, 5000);
 
@@ -137,8 +140,16 @@ public sealed class AdminProofsController : ControllerBase
 
     private static string? NormalizeStatus(string? status) => status?.ToLowerInvariant() switch
     {
+        "pickedup" => ProofStatuses.PickedUp,
         "delivered" => ProofStatuses.Delivered,
         "failed" => ProofStatuses.Failed,
+        _ => null,
+    };
+
+    private static string? NormalizeProofType(string? proofType) => proofType?.ToLowerInvariant() switch
+    {
+        "pickup" => Ulak.Core.Domain.ProofTypes.Pickup,
+        "delivery" => Ulak.Core.Domain.ProofTypes.Delivery,
         _ => null,
     };
 

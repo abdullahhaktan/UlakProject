@@ -124,6 +124,10 @@
   <data name="Status_Pending" xml:space="preserve"><value>Pendiente</value></data>
   <data name="Status_Delivered" xml:space="preserve"><value>Entregado</value></data>
   <data name="Status_Failed" xml:space="preserve"><value>No entregado</value></data>
+  <data name="Status_PickedUp" xml:space="preserve"><value>Recogido</value></data>
+  <data name="Proof_Type" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ProofType_Pickup" xml:space="preserve"><value>Recogida</value></data>
+  <data name="ProofType_Delivery" xml:space="preserve"><value>Entrega</value></data>
   <data name="Common_Search" xml:space="preserve"><value>Buscar</value></data>
   <data name="Common_Status" xml:space="preserve"><value>Estado</value></data>
   <data name="Common_Driver" xml:space="preserve"><value>Conductor</value></data>

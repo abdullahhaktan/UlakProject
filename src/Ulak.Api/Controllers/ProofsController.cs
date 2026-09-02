@@ -42,6 +42,7 @@ public sealed class ProofsController : ControllerBase
             request.DeliveryId,
             _currentUser.Id,
             request.Status,
+            request.ProofType,
             request.FailureReason,
             request.RecipientSignedName,
             request.SignatureUrl,
@@ -51,7 +52,8 @@ public sealed class ProofsController : ControllerBase
             photos);
 
         var result = await _proofs.CreateAsync(_currentUser.CompanyId, proof, ct);
-        var response = new CreateProofResponse(result.Id, result.DeliveryId, result.Status, result.WasDuplicate);
+        var response = new CreateProofResponse(
+            result.Id, result.DeliveryId, result.Status, result.WasDuplicate, result.ProofType);
 
         return result.WasDuplicate
             ? Ok(response)

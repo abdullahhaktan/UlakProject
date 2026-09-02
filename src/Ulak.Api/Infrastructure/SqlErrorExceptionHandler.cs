@@ -23,6 +23,9 @@ public sealed class SqlErrorExceptionHandler : IExceptionHandler
         [50022] = StatusCodes.Status409Conflict,   // delivery already has a proof
         [50023] = StatusCodes.Status400BadRequest, // failure reason required
         [50024] = StatusCodes.Status400BadRequest, // too many photos
+        [50025] = StatusCodes.Status409Conflict,   // pickup proof required first
+        [50026] = StatusCodes.Status400BadRequest, // invalid proof type / status
+        [50027] = StatusCodes.Status409Conflict,   // delivery in wrong state for this proof
         [50030] = StatusCodes.Status409Conflict,   // sign-up phone already registered
         [50031] = StatusCodes.Status409Conflict,   // create-driver phone already registered
         [50032] = StatusCodes.Status409Conflict,   // update-driver phone already registered

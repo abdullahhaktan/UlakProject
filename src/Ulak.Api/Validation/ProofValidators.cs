@@ -21,8 +21,13 @@ public sealed class CreateProofRequestValidator : AbstractValidator<CreateProofR
     {
         RuleFor(x => x.ClientUuid).NotEmpty();
         RuleFor(x => x.DeliveryId).GreaterThan(0);
+        RuleFor(x => x.ProofType).Must(ProofTypes.IsValid)
+            .WithMessage("proofType must be 'Pickup' or 'Delivery'.");
         RuleFor(x => x.Status).Must(ProofStatuses.IsValid)
-            .WithMessage("status must be 'Delivered' or 'Failed'.");
+            .WithMessage("status must be 'PickedUp', 'Delivered' or 'Failed'.");
+        RuleFor(x => x).Must(x => ProofStatuses.IsValidFor(x.ProofType, x.Status))
+            .WithMessage("status does not match proofType (pickup: PickedUp/Failed, delivery: Delivered/Failed).")
+            .When(x => ProofTypes.IsValid(x.ProofType));
         RuleFor(x => x.FailureReason).NotEmpty().MaximumLength(300)
             .When(x => x.Status == ProofStatuses.Failed)
             .WithMessage("failureReason is required when status is 'Failed'.");

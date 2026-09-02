@@ -31,6 +31,9 @@ public sealed class PendingProof
 
     public string OrderRef { get; set; } = string.Empty;
 
+    /// <summary>"Pickup" or "Delivery".</summary>
+    public string ProofType { get; set; } = "Delivery";
+
     public string Status { get; set; } = "Delivered";
 
     public string? FailureReason { get; set; }

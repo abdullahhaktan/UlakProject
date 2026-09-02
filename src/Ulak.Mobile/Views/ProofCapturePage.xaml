@@ -21,7 +21,7 @@
                 <Label Text="{x:Static st:Icon.ArrowLeft}" Style="{StaticResource Icon}" FontSize="22" />
             </Border>
             <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-                <Label Text="Teslimat kanıtı" Style="{StaticResource ScreenTitle}" FontSize="17" />
+                <Label Text="{Binding ScreenTitle}" Style="{StaticResource ScreenTitle}" FontSize="17" />
                 <Label Style="{StaticResource Secondary}" FontSize="12">
                     <Label.FormattedText>
                         <FormattedString>
@@ -96,7 +96,7 @@
 
                 <!-- recipient name -->
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="TESLİM ALAN KİŞİ" Style="{StaticResource FieldLabel}" />
+                    <Label Text="{Binding RecipientFieldLabel}" Style="{StaticResource FieldLabel}" />
                     <Border Style="{StaticResource InputBorder}">
                         <Entry Placeholder="Ad soyad" Text="{Binding RecipientSignedName}" />
                     </Border>
@@ -106,7 +106,7 @@
                 <Border Style="{StaticResource Card}">
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                            <Label Text="Teslim edilemedi" Style="{StaticResource CardTitle}" FontSize="15" />
+                            <Label Text="{Binding FailedToggleLabel}" Style="{StaticResource CardTitle}" FontSize="15" />
                             <Label Text="Adres yanlış, alıcı yok vb." Style="{StaticResource Secondary}" FontSize="12" />
                         </VerticalStackLayout>
                         <Switch Grid.Column="1" IsToggled="{Binding IsFailed}" VerticalOptions="Center" />

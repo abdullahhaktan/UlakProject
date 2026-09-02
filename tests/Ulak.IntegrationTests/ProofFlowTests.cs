@@ -58,10 +58,13 @@ public sealed class ProofFlowTests
     {
         var driver = await AuthedClientAsync(Driver1, Password);
 
+        // pickup first — a delivery proof is rejected until the parcel is picked up
+        (await driver.PostAsJsonAsync("/proofs", PickupFor(3))).EnsureSuccessStatusCode();
+
         var clientUuid = Guid.NewGuid();
         var request = new CreateProofRequest(
             clientUuid,
-            DeliveryId: 2,                 // ORD-24002, assigned to driver 1
+            DeliveryId: 3,                 // ORD-24003, assigned to driver 1
             Status: "Delivered",
             FailureReason: null,
             RecipientSignedName: "Test Alici",
@@ -83,12 +86,62 @@ public sealed class ProofFlowTests
         secondBody!.WasDuplicate.ShouldBeTrue();
         secondBody.Id.ShouldBe(firstBody.Id);
 
-        // the ops panel sees a single proof for that order
+        // the ops panel sees the pickup + the (single) delivery proof for that order
         var ops = await AuthedClientAsync(Ops, OpsPassword);
-        var page = await ops.GetFromJsonAsync<PagedProofs>("/admin/proofs?search=ORD-24002");
-        page!.TotalCount.ShouldBe(1);
-        page.Items.Single().PhotoCount.ShouldBe(2);
+        var page = await ops.GetFromJsonAsync<PagedProofs>("/admin/proofs?search=ORD-24003");
+        page!.TotalCount.ShouldBe(2);
+        var delivery = page.Items.Single(p => p.ProofType == "Delivery");
+        delivery.PhotoCount.ShouldBe(2);
     }
+
+    [Fact]
+    public async Task A_delivery_proof_is_rejected_until_the_pickup_proof_exists()
+    {
+        var driver = await AuthedClientAsync(Driver1, Password);
+
+        var delivery = new CreateProofRequest(
+            Guid.NewGuid(), DeliveryId: 2, Status: "Delivered", FailureReason: null,
+            RecipientSignedName: null, SignatureUrl: null, PhotoUrls: ["photos/it/x.jpg"],
+            CapturedLat: null, CapturedLng: null, CapturedAt: DateTimeOffset.UtcNow.AddMinutes(-1));
+
+        var tooEarly = await driver.PostAsJsonAsync("/proofs", delivery);
+        tooEarly.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+
+        (await driver.PostAsJsonAsync("/proofs", PickupFor(2))).EnsureSuccessStatusCode();
+
+        var now = await driver.PostAsJsonAsync("/proofs", delivery);
+        now.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        // delivery is Delivered, and both proofs are on record
+        var detail = await driver.GetFromJsonAsync<DeliveryDetailDto>("/deliveries/2");
+        detail!.Status.ShouldBe("Delivered");
+    }
+
+    [Fact]
+    public async Task A_failed_pickup_sends_the_delivery_straight_to_failed()
+    {
+        var driver = await AuthedClientAsync(Driver1, Password);
+
+        var failedPickup = new CreateProofRequest(
+            Guid.NewGuid(), DeliveryId: 9, Status: "Failed",
+            FailureReason: "Satici paketi teslim etmedi",
+            RecipientSignedName: null, SignatureUrl: null, PhotoUrls: [],
+            CapturedLat: null, CapturedLng: null, CapturedAt: DateTimeOffset.UtcNow.AddMinutes(-1),
+            ProofType: "Pickup");
+
+        (await driver.PostAsJsonAsync("/proofs", failedPickup)).StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        var detail = await driver.GetFromJsonAsync<DeliveryDetailDto>("/deliveries/9");
+        detail!.Status.ShouldBe("Failed");
+    }
+
+    private static CreateProofRequest PickupFor(int deliveryId) => new(
+        Guid.NewGuid(), deliveryId, Status: "PickedUp", FailureReason: null,
+        RecipientSignedName: "Depo", SignatureUrl: null, PhotoUrls: ["photos/it/pickup.jpg"],
+        CapturedLat: null, CapturedLng: null, CapturedAt: DateTimeOffset.UtcNow.AddMinutes(-2),
+        ProofType: "Pickup");
+
+    private sealed record DeliveryDetailDto(int Id, string OrderRef, string Status);
 
     [Fact]
     public async Task A_driver_cannot_submit_a_proof_for_an_unassigned_delivery()

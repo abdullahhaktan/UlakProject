@@ -14,6 +14,7 @@ public sealed record GridQuery(
     int? DriverId = null,
     string? From = null,
     string? To = null,
+    string? ProofType = null,
     string Sort = "CreatedAtUtc",
     string Dir = "DESC",
     int Skip = 0,
@@ -130,6 +131,7 @@ public sealed class UlakApiClient
 
         Add("search", q.Search);
         Add("status", q.Status);
+        Add("proof_type", q.ProofType);
         if (q.DriverId is > 0) parts.Add($"driver_id={q.DriverId}");
         Add("from", q.From);
         Add("to", q.To);

@@ -3,7 +3,11 @@
 @{
     ViewData["Title"] = $"{L["Proof_Title"].Value} #{Model.Id}";
     var hasGps = Model.CapturedLat.HasValue && Model.CapturedLng.HasValue;
-    var ok = Model.Status == "Delivered";
+    var isPickup = Model.ProofType == "Pickup";
+    var failed = Model.Status == "Failed";
+    var statusLabel = failed ? L["Status_Failed"].Value
+        : isPickup ? L["Status_PickedUp"].Value : L["Status_Delivered"].Value;
+    var typeLabel = isPickup ? L["ProofType_Pickup"].Value : L["ProofType_Delivery"].Value;
 }
 
 <a class="breadcrumb" asp-action="Index">
@@ -14,7 +18,8 @@
 <div class="page-head">
     <div>
         <h1>@L["Proof_Title"] #@Model.Id
-            <span class="pill @(ok ? "ok" : "danger")" style="vertical-align:middle">@(ok ? L["Status_Delivered"] : L["Status_Failed"])</span>
+            <span class="pill @(isPickup ? "pending" : "ok")" style="vertical-align:middle">@typeLabel</span>
+            <span class="pill @(failed ? "danger" : "ok")" style="vertical-align:middle">@statusLabel</span>
         </h1>
         <p class="sub">@string.Format(L["Proof_SubtitleFmt"].Value, Model.OrderRef)</p>
     </div>

@@ -39,6 +39,7 @@ public sealed class StatusColorConverter : IValueConverter
     {
         "Delivered" => ThemeColor.Pick("#3F6B4E", "#8FD0A4"),   // Ok
         "Failed" => ThemeColor.Pick("#A8443C", "#F0A49C"),      // Error
+        "PickedUp" => ThemeColor.Pick("#8A6D1F", "#E4C579"),    // Warn/in-transit
         _ => ThemeColor.Pick("#595D6C", "#B2B6CA"),             // Muted
     };
 
@@ -53,6 +54,7 @@ public sealed class StatusTintConverter : IValueConverter
     {
         "Delivered" => ThemeColor.Pick("#E3EFE6", "#22322A"),   // OkTint
         "Failed" => ThemeColor.Pick("#F8E5E3", "#3A2523"),      // ErrorTint
+        "PickedUp" => ThemeColor.Pick("#F5EBD6", "#332B1B"),    // WarnTint
         _ => ThemeColor.Pick("#E7E9F2", "#2A2C33"),             // neutral
     };
 
@@ -67,6 +69,7 @@ public sealed class StatusLabelConverter : IValueConverter
     {
         "Delivered" => "Teslim edildi",
         "Failed" => "Teslim edilemedi",
+        "PickedUp" => "Teslim alındı",
         _ => "Bekliyor",
     };
 

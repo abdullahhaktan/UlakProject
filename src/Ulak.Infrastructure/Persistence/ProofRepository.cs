@@ -22,6 +22,7 @@ public sealed class ProofRepository : IProofRepository
             proof.DeliveryId,
             proof.DriverId,
             proof.Status,
+            proof.ProofType,
             proof.FailureReason,
             proof.RecipientSignedName,
             proof.SignatureUrl,
@@ -51,6 +52,7 @@ public sealed class ProofRepository : IProofRepository
                 ToDate = query.ToDate?.ToDateTime(TimeOnly.MinValue),
                 query.DriverId,
                 query.Status,
+                query.ProofType,
                 query.Search,
                 query.SortColumn,
                 query.SortDirection,
@@ -80,10 +82,10 @@ public sealed class ProofRepository : IProofRepository
 
         return new AdminProofDetail(
             header.Id, header.DeliveryId, header.OrderRef, header.RecipientName, header.RecipientPhone,
-            header.AddressText, header.DeliveryLat, header.DeliveryLng, header.Status, header.FailureReason,
-            header.RecipientSignedName, header.SignatureUrl, header.CapturedLat, header.CapturedLng,
-            header.CapturedAtUtc, header.SyncedAtUtc, header.DriverId, header.DriverName, header.DriverPhone,
-            photos);
+            header.AddressText, header.DeliveryLat, header.DeliveryLng, header.ProofType, header.Status,
+            header.FailureReason, header.RecipientSignedName, header.SignatureUrl, header.CapturedLat,
+            header.CapturedLng, header.CapturedAtUtc, header.SyncedAtUtc, header.DriverId, header.DriverName,
+            header.DriverPhone, photos);
     }
 
     private static DataTable BuildPhotoTable(IReadOnlyList<ProofPhotoInput> photos)
@@ -101,7 +103,8 @@ public sealed class ProofRepository : IProofRepository
 
     private sealed record ProofHeaderRow(
         long Id, int DeliveryId, string OrderRef, string RecipientName, string? RecipientPhone,
-        string AddressText, decimal? DeliveryLat, decimal? DeliveryLng, string Status, string? FailureReason,
-        string? RecipientSignedName, string? SignatureUrl, decimal? CapturedLat, decimal? CapturedLng,
-        DateTime CapturedAtUtc, DateTime SyncedAtUtc, int DriverId, string DriverName, string DriverPhone);
+        string AddressText, decimal? DeliveryLat, decimal? DeliveryLng, string ProofType, string Status,
+        string? FailureReason, string? RecipientSignedName, string? SignatureUrl, decimal? CapturedLat,
+        decimal? CapturedLng, DateTime CapturedAtUtc, DateTime SyncedAtUtc, int DriverId, string DriverName,
+        string DriverPhone);
 }

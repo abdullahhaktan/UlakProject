@@ -28,16 +28,29 @@ public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttri
 
     public bool IsTeammateDelivery => !IsMine;
 
-    /// <summary>The proof-capture CTA shows only for a loaded delivery that's mine.</summary>
-    public bool CanCaptureProof => Delivery is not null && IsMine;
+    /// <summary>Pickup proof: my delivery, still Pending.</summary>
+    public bool CanCapturePickup => IsMine && Delivery is { Status: "Pending" };
+
+    /// <summary>Delivery proof: my delivery, already picked up.</summary>
+    public bool CanCaptureDelivery => IsMine && Delivery is { Status: "PickedUp" };
+
+    /// <summary>The bottom CTA strip shows while there's any proof step left to do.</summary>
+    public bool CanCaptureProof => CanCapturePickup || CanCaptureDelivery;
+
+    private void RaiseCaptureFlags()
+    {
+        OnPropertyChanged(nameof(CanCapturePickup));
+        OnPropertyChanged(nameof(CanCaptureDelivery));
+        OnPropertyChanged(nameof(CanCaptureProof));
+    }
 
     partial void OnIsMineChanged(bool value)
     {
         OnPropertyChanged(nameof(IsTeammateDelivery));
-        OnPropertyChanged(nameof(CanCaptureProof));
+        RaiseCaptureFlags();
     }
 
-    partial void OnDeliveryChanged(DeliveryDetail? value) => OnPropertyChanged(nameof(CanCaptureProof));
+    partial void OnDeliveryChanged(DeliveryDetail? value) => RaiseCaptureFlags();
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -91,14 +104,21 @@ public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttri
     }
 
     [RelayCommand]
-    private async Task CaptureProofAsync()
+    private async Task CapturePickupAsync()
     {
-        if (Delivery is null || !IsMine)
+        if (CanCapturePickup)
         {
-            return;
+            await Shell.Current.GoToAsync($"ProofCapturePage?id={Delivery!.Id}&type=Pickup");
         }
+    }
 
-        await Shell.Current.GoToAsync($"ProofCapturePage?id={Delivery.Id}");
+    [RelayCommand]
+    private async Task CaptureDeliveryAsync()
+    {
+        if (CanCaptureDelivery)
+        {
+            await Shell.Current.GoToAsync($"ProofCapturePage?id={Delivery!.Id}&type=Delivery");
+        }
     }
 
     [RelayCommand]

@@ -17,9 +17,17 @@
 
 <div class="filter-bar">
     <label class="field grow"><span>@L["Common_Search"]</span><input type="text" id="f-search" placeholder="@L["Proofs_SearchHint"]" /></label>
+    <label class="field"><span>@L["Proof_Type"]</span>
+        <select id="f-type">
+            <option value="">@L["Common_All"]</option>
+            <option value="Pickup">@L["ProofType_Pickup"]</option>
+            <option value="Delivery">@L["ProofType_Delivery"]</option>
+        </select>
+    </label>
     <label class="field"><span>@L["Common_Status"]</span>
         <select id="f-status">
             <option value="">@L["Common_All"]</option>
+            <option value="PickedUp">@L["Status_PickedUp"]</option>
             <option value="Delivered">@L["Status_Delivered"]</option>
             <option value="Failed">@L["Status_Failed"]</option>
         </select>
@@ -36,7 +44,7 @@
     <div class="table-scroll">
         <table class="data">
             <thead><tr>
-                <th>@L["Delivery_OrderRef"]</th><th>@L["Delivery_Recipient"]</th><th>@L["Common_Status"]</th>
+                <th>@L["Delivery_OrderRef"]</th><th>@L["Delivery_Recipient"]</th><th>@L["Proof_Type"]</th><th>@L["Common_Status"]</th>
                 <th>@L["Common_Driver"]</th><th>@L["Proof_Photos"]</th><th>@L["Proof_CapturedAt"]</th><th>@L["Proof_SyncedAt"]</th>
             </tr></thead>
             <tbody id="proofsBody"></tbody>
@@ -51,13 +59,16 @@
 @section Scripts {
     <script>
         (function () {
-            var statusText = { Delivered: '@L["Status_Delivered"]', Failed: '@L["Status_Failed"]' };
+            var statusText = { PickedUp: '@L["Status_PickedUp"]', Delivered: '@L["Status_Delivered"]', Failed: '@L["Status_Failed"]' };
+            var typeText = { Pickup: '@L["ProofType_Pickup"]', Delivery: '@L["ProofType_Delivery"]' };
             var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="m5 13 5 5 9-11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            var boxSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5v-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m3.5 7.5 8.5 4.5 8.5-4.5M12 12v9" stroke="currentColor" stroke-width="1.6"/></svg>';
             var cameraSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 8h3l2-2h6l2 2h3v11H4V8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>';
 
             function filters() {
                 return {
                     search: document.getElementById('f-search').value || null,
+                    proofType: document.getElementById('f-type').value || null,
                     status: document.getElementById('f-status').value || null,
                     driverId: document.getElementById('f-driver').value || null,
                     from: document.getElementById('f-from').value || null,
@@ -67,13 +78,20 @@
 
             function fmt(v) { var d = new Date(v); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
+            function statusPill(s) {
+                if (s === 'Failed') return 'danger';
+                if (s === 'PickedUp') return 'pending';
+                return 'ok';
+            }
+
             function renderRow(r) {
-                var ok = r.status === 'Delivered';
+                var done = r.status === 'Delivered' || r.status === 'PickedUp';
                 return '<tr>' +
                     '<td class="cell-mono">' + Ulak.esc(r.orderRef) + '</td>' +
                     '<td class="cell-primary">' + Ulak.esc(r.recipientName) + '</td>' +
-                    '<td><span class="pill ' + (ok ? 'ok' : 'danger') + '"' + (r.failureReason ? ' title="' + Ulak.esc(r.failureReason) + '"' : '') + '>' +
-                        (ok ? checkSvg : '') + Ulak.esc(statusText[r.status] || r.status) + '</span></td>' +
+                    '<td><span class="pill ' + (r.proofType === 'Pickup' ? 'pending' : 'ok') + '">' + boxSvg + Ulak.esc(typeText[r.proofType] || r.proofType) + '</span></td>' +
+                    '<td><span class="pill ' + statusPill(r.status) + '"' + (r.failureReason ? ' title="' + Ulak.esc(r.failureReason) + '"' : '') + '>' +
+                        (done && r.status !== 'PickedUp' ? checkSvg : '') + Ulak.esc(statusText[r.status] || r.status) + '</span></td>' +
                     '<td>' + Ulak.esc(r.driverName) + '</td>' +
                     '<td><span class="pill pending">' + cameraSvg + (r.photoCount || 0) + '</span></td>' +
                     '<td class="cell-mono">' + fmt(r.capturedAtUtc) + '</td>' +
@@ -84,7 +102,7 @@
             var table = Ulak.dataTable({
                 body: '#proofsBody', foot: '.table-foot',
                 url: '@Url.Action("Data", "Proofs")',
-                sort: 'CapturedAtUtc', desc: true, colspan: 7,
+                sort: 'CapturedAtUtc', desc: true, colspan: 8,
                 filters: filters, render: renderRow,
                 onRowClick: function (r) { window.location = '@Url.Action("Detail", "Proofs")/' + r.id; },
                 text: {
