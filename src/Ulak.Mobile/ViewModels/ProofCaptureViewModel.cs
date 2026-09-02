@@ -40,6 +40,21 @@ public sealed partial class ProofCaptureViewModel : BaseViewModel, IQueryAttribu
     private int _deliveryId;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPickup))]
+    [NotifyPropertyChangedFor(nameof(ScreenTitle))]
+    [NotifyPropertyChangedFor(nameof(RecipientFieldLabel))]
+    [NotifyPropertyChangedFor(nameof(FailedToggleLabel))]
+    private string _proofType = "Delivery";
+
+    public bool IsPickup => ProofType == "Pickup";
+
+    public string ScreenTitle => IsPickup ? "Teslim alma kanıtı" : "Teslim etme kanıtı";
+
+    public string RecipientFieldLabel => IsPickup ? "TESLİM ALINAN YER / KİŞİ" : "TESLİM ALAN KİŞİ";
+
+    public string FailedToggleLabel => IsPickup ? "Teslim alınamadı" : "Teslim edilemedi";
+
+    [ObservableProperty]
     private string _orderRef = string.Empty;
 
     [ObservableProperty]
@@ -59,6 +74,11 @@ public sealed partial class ProofCaptureViewModel : BaseViewModel, IQueryAttribu
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        if (query.TryGetValue("type", out var typeRaw) && typeRaw?.ToString() == "Pickup")
+        {
+            ProofType = "Pickup";
+        }
+
         if (query.TryGetValue("id", out var raw) && int.TryParse(raw?.ToString(), out var id))
         {
             DeliveryId = id;
@@ -144,6 +164,8 @@ public sealed partial class ProofCaptureViewModel : BaseViewModel, IQueryAttribu
             return;
         }
 
+        var status = IsFailed ? "Failed" : (IsPickup ? "PickedUp" : "Delivered");
+
         try
         {
             IsBusy = true;
@@ -156,7 +178,8 @@ public sealed partial class ProofCaptureViewModel : BaseViewModel, IQueryAttribu
                 ClientUuid = Guid.NewGuid(),
                 DeliveryId = DeliveryId,
                 OrderRef = OrderRef,
-                Status = IsFailed ? "Failed" : "Delivered",
+                ProofType = ProofType,
+                Status = status,
                 FailureReason = IsFailed ? FailureReason.Trim() : null,
                 RecipientSignedName = string.IsNullOrWhiteSpace(RecipientSignedName) ? null : RecipientSignedName.Trim(),
                 CapturedLat = location?.Latitude,
@@ -168,7 +191,9 @@ public sealed partial class ProofCaptureViewModel : BaseViewModel, IQueryAttribu
 
             await Shell.Current.DisplayAlert(
                 "Kaydedildi",
-                "Teslimat kanıtı kaydedildi ve gönderilmek üzere sıraya alındı.",
+                IsPickup
+                    ? "Teslim alma kanıtı kaydedildi ve gönderilmek üzere sıraya alındı."
+                    : "Teslim etme kanıtı kaydedildi ve gönderilmek üzere sıraya alındı.",
                 "Tamam");
 
             await Shell.Current.GoToAsync("../..");

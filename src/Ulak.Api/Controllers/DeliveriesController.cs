@@ -81,7 +81,7 @@ public sealed class DeliveriesController : ControllerBase
 
     private static DeliveryListItem ToListItem(DriverDelivery d) => new(
         d.Id, d.OrderRef, d.RecipientName, d.RecipientPhone, d.AddressText,
-        d.Lat, d.Lng, d.Note, d.Status, d.CreatedAtUtc, d.HasProof, d.IsMine);
+        d.Lat, d.Lng, d.Note, d.Status, d.CreatedAtUtc, d.HasProof, d.HasPickupProof, d.IsMine);
 
     private static DeliveryDetail ToDetail(Delivery d) => new(
         d.Id, d.OrderRef, d.RecipientName, d.RecipientPhone, d.AddressText,

@@ -117,14 +117,26 @@
         <Border Grid.Row="2" Padding="16,12,16,26" Stroke="Transparent"
                 BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}"
                 IsVisible="{Binding CanCaptureProof}">
-            <Button Text="Teslimat kanıtı oluştur"
-                    Command="{Binding CaptureProofCommand}"
-                    ContentLayout="Left,8">
-                <Button.ImageSource>
-                    <FontImageSource FontFamily="Phosphor" Glyph="{x:Static st:Icon.Camera}"
-                                     Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
-                </Button.ImageSource>
-            </Button>
+            <VerticalStackLayout Spacing="8">
+                <Button Text="Teslim aldım kanıtı"
+                        Command="{Binding CapturePickupCommand}"
+                        IsVisible="{Binding CanCapturePickup}"
+                        ContentLayout="Left,8">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="Phosphor" Glyph="{x:Static st:Icon.Package}"
+                                         Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
+                    </Button.ImageSource>
+                </Button>
+                <Button Text="Teslim ettim kanıtı"
+                        Command="{Binding CaptureDeliveryCommand}"
+                        IsVisible="{Binding CanCaptureDelivery}"
+                        ContentLayout="Left,8">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="Phosphor" Glyph="{x:Static st:Icon.Camera}"
+                                         Color="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentDark}}" />
+                    </Button.ImageSource>
+                </Button>
+            </VerticalStackLayout>
         </Border>
     </Grid>
 </ContentPage>

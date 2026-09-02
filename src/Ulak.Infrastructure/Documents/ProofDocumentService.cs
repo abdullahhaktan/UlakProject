@@ -75,6 +75,7 @@ public sealed class ProofDocumentService : IProofDocumentService
                     row.RelativeItem().Column(c =>
                     {
                         c.Item().Text("Delivery / Teslimat").SemiBold();
+                        c.Item().Text($"Type: {proof.ProofType}");
                         c.Item().Text($"Status: {proof.Status}");
                         if (!string.IsNullOrEmpty(proof.FailureReason))
                         {
@@ -144,7 +145,7 @@ public sealed class ProofDocumentService : IProofDocumentService
 
         string[] headers =
         [
-            "Proof Id", "Order Ref", "Recipient", "Address", "Status", "Failure Reason",
+            "Proof Id", "Order Ref", "Recipient", "Address", "Type", "Status", "Failure Reason",
             "Driver", "Photos", "Captured (UTC)", "Synced (UTC)",
         ];
         for (var i = 0; i < headers.Length; i++)
@@ -161,12 +162,13 @@ public sealed class ProofDocumentService : IProofDocumentService
             sheet.Cell(r, 2).Value = row.OrderRef;
             sheet.Cell(r, 3).Value = row.RecipientName;
             sheet.Cell(r, 4).Value = row.AddressText;
-            sheet.Cell(r, 5).Value = row.Status;
-            sheet.Cell(r, 6).Value = row.FailureReason;
-            sheet.Cell(r, 7).Value = row.DriverName;
-            sheet.Cell(r, 8).Value = row.PhotoCount;
-            sheet.Cell(r, 9).Value = row.CapturedAtUtc;
-            sheet.Cell(r, 10).Value = row.SyncedAtUtc;
+            sheet.Cell(r, 5).Value = row.ProofType;
+            sheet.Cell(r, 6).Value = row.Status;
+            sheet.Cell(r, 7).Value = row.FailureReason;
+            sheet.Cell(r, 8).Value = row.DriverName;
+            sheet.Cell(r, 9).Value = row.PhotoCount;
+            sheet.Cell(r, 10).Value = row.CapturedAtUtc;
+            sheet.Cell(r, 11).Value = row.SyncedAtUtc;
             r++;
         }
 

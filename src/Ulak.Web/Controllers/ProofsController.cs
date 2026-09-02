@@ -23,10 +23,10 @@ public sealed class ProofsController : Controller
     public async Task<IActionResult> Data(
         int skip = 0, int take = 20, string? sort = null, bool desc = true,
         string? search = null, string? status = null, int? driverId = null,
-        string? from = null, string? to = null, CancellationToken ct = default)
+        string? from = null, string? to = null, string? proofType = null, CancellationToken ct = default)
     {
         var query = new GridQuery(
-            Search: search, Status: status, DriverId: driverId, From: from, To: to,
+            Search: search, Status: status, DriverId: driverId, From: from, To: to, ProofType: proofType,
             Sort: string.IsNullOrWhiteSpace(sort) ? "CapturedAtUtc" : sort,
             Dir: desc ? "DESC" : "ASC", Skip: skip, Take: take);
 

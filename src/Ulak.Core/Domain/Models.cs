@@ -51,6 +51,7 @@ public sealed record DriverDelivery(
     string Status,
     DateTime CreatedAtUtc,
     bool HasProof,
+    bool HasPickupProof,
     bool IsMine);
 
 /// <summary>Per-tenant configuration (<c>usp_Company_GetSettings</c>).</summary>
@@ -72,6 +73,7 @@ public sealed record NewProof(
     int DeliveryId,
     int DriverId,
     string Status,
+    string ProofType,
     string? FailureReason,
     string? RecipientSignedName,
     string? SignatureUrl,
@@ -80,4 +82,4 @@ public sealed record NewProof(
     DateTime CapturedAtUtc,
     IReadOnlyList<ProofPhotoInput> Photos);
 
-public sealed record ProofCreateResult(long Id, int DeliveryId, string Status, bool WasDuplicate);
+public sealed record ProofCreateResult(long Id, int DeliveryId, string Status, bool WasDuplicate, string ProofType);

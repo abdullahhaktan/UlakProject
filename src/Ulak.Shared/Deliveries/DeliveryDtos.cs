@@ -14,6 +14,7 @@ public sealed record DeliveryListItem(
     string Status,
     DateTime CreatedAtUtc,
     bool HasProof,
+    bool HasPickupProof,
     bool IsMine);
 
 public sealed record DeliveryDetail(

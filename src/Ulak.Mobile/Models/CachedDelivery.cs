@@ -26,6 +26,7 @@ public sealed class CachedDelivery
     public string Status { get; set; } = "Pending";
     public DateTime CreatedAtUtc { get; set; }
     public bool HasProof { get; set; }
+    public bool HasPickupProof { get; set; }
     public bool IsMine { get; set; }
     public DateTimeOffset CachedAtUtc { get; set; }
 
@@ -42,13 +43,14 @@ public sealed class CachedDelivery
         Status = d.Status,
         CreatedAtUtc = d.CreatedAtUtc,
         HasProof = d.HasProof,
+        HasPickupProof = d.HasPickupProof,
         IsMine = d.IsMine,
         CachedAtUtc = cachedAt,
     };
 
     public DeliveryListItem ToListItem() => new(
         Id, OrderRef, RecipientName, RecipientPhone, AddressText,
-        (decimal?)Lat, (decimal?)Lng, Note, Status, CreatedAtUtc, HasProof, IsMine);
+        (decimal?)Lat, (decimal?)Lng, Note, Status, CreatedAtUtc, HasProof, HasPickupProof, IsMine);
 
     public DeliveryDetail ToDetail() => new(
         Id, OrderRef, RecipientName, RecipientPhone, AddressText,

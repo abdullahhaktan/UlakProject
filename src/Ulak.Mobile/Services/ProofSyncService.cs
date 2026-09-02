@@ -132,6 +132,18 @@ public sealed class ProofSyncService
 
     private async Task ProcessAsync(PendingProof proof)
     {
+        // Hold a delivery proof back until its pickup proof has left this device —
+        // sending it early earns a permanent 409 (THROW 50025).
+        if (proof.ProofType == "Delivery" && await _db.HasUnsyncedPickupAsync(proof.DeliveryId))
+        {
+            proof.State = SyncState.Pending;
+            proof.NextAttemptUtc = DateTimeOffset.UtcNow.AddSeconds(15);
+            await _db.UpdateProofAsync(proof);
+            _logger.LogInformation("Proof {ClientUuid} held: pickup proof for delivery {DeliveryId} still queued",
+                proof.ClientUuid, proof.DeliveryId);
+            return;
+        }
+
         proof.State = SyncState.Syncing;
         await _db.UpdateProofAsync(proof);
 
@@ -161,7 +173,8 @@ public sealed class ProofSyncService
                 photos.OrderBy(p => p.OrderIndex).Select(p => p.RemoteKey!).ToList(),
                 proof.CapturedLat,
                 proof.CapturedLng,
-                proof.CapturedAt);
+                proof.CapturedAt,
+                proof.ProofType);
 
             var result = await _api.SubmitProofAsync(request, CancellationToken.None);
             _logger.LogInformation("Proof {ClientUuid} synced (duplicate={Dup})", proof.ClientUuid, result.WasDuplicate);

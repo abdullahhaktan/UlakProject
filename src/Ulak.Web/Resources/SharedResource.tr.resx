@@ -124,6 +124,10 @@
   <data name="Status_Pending" xml:space="preserve"><value>Bekliyor</value></data>
   <data name="Status_Delivered" xml:space="preserve"><value>Teslim edildi</value></data>
   <data name="Status_Failed" xml:space="preserve"><value>Teslim edilemedi</value></data>
+  <data name="Status_PickedUp" xml:space="preserve"><value>Teslim alındı</value></data>
+  <data name="Proof_Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="ProofType_Pickup" xml:space="preserve"><value>Teslim alma</value></data>
+  <data name="ProofType_Delivery" xml:space="preserve"><value>Teslim etme</value></data>
   <data name="Common_Search" xml:space="preserve"><value>Ara</value></data>
   <data name="Common_Status" xml:space="preserve"><value>Durum</value></data>
   <data name="Common_Driver" xml:space="preserve"><value>Sürücü</value></data>
