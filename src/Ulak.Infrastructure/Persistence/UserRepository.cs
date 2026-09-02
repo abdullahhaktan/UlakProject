@@ -17,12 +17,35 @@ public sealed class UserRepository : IUserRepository
         return rows.SingleOrDefault();
     }
 
-    public async Task<IReadOnlyList<DriverLookup>> ListDriversAsync(int companyId, CancellationToken ct)
+    public async Task<IReadOnlyList<DriverLookup>> ListDriversAsync(
+        int companyId, bool includeInactive, CancellationToken ct)
     {
         using var connection = _factory.Create();
         var rows = await connection.QueryProcAsync<DriverLookup>(
-            "dbo.usp_AppUser_ListDrivers", new { CompanyId = companyId }, ct);
+            "dbo.usp_AppUser_ListDrivers",
+            new { CompanyId = companyId, IncludeInactive = includeInactive },
+            ct);
         return rows.ToList();
+    }
+
+    public async Task<AppUser> UpdateDriverAsync(
+        int companyId, int driverId, string name, string phone, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        var rows = await connection.QueryProcAsync<AppUser>(
+            "dbo.usp_AppUser_UpdateDriver",
+            new { CompanyId = companyId, Id = driverId, Name = name, Phone = phone },
+            ct);
+        return rows.Single();
+    }
+
+    public async Task SetDriverActiveAsync(int companyId, int driverId, bool isActive, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        await connection.ExecuteProcAsync(
+            "dbo.usp_AppUser_SetDriverActive",
+            new { CompanyId = companyId, Id = driverId, IsActive = isActive },
+            ct);
     }
 
     public async Task<AppUser> SignUpCompanyAsync(

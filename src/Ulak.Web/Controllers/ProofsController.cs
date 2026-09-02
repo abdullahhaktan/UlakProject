@@ -36,7 +36,7 @@ public sealed class ProofsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Drivers(CancellationToken ct) =>
-        Json(await _api.GetDriversAsync(ct) ?? []);
+        Json(await _api.GetDriversAsync(includeInactive: false, ct) ?? []);
 
     [HttpGet]
     public async Task<IActionResult> Pdf(long id, CancellationToken ct)

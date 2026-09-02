@@ -15,7 +15,14 @@ public sealed record AdminDeliveryRow(
 
 public sealed record DriverOption(int Id, string Name, string Phone);
 
+/// <summary>A driver as shown on the panel's Drivers page.</summary>
+public sealed record DriverListItem(int Id, string Name, string Phone, bool IsActive, int OpenDeliveries);
+
 public sealed record CreateDriverRequest(string Name, string Phone);
+
+public sealed record UpdateDriverRequest(string Name, string Phone);
+
+public sealed record SetDriverActiveRequest(bool IsActive);
 
 /// <summary>The temp password is returned exactly once; the driver must change it on first login.</summary>
 public sealed record CreateDriverResponse(int Id, string Name, string Phone, string TempPassword);

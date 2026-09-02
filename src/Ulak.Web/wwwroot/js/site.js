@@ -49,6 +49,102 @@
     return el ? el.value : "";
   };
 
+  /* ---------- phone inputs ----------
+     markup:
+       <div class="phone-input" data-cc="+90">
+         <input class="phone-cc" ...>            (editable dial code, optional)
+         <input class="phone-nat" ...>           (national number, digits, no leading 0)
+         <input type="hidden" class="phone-full" name="Phone">   (synced, for form posts)
+       </div>
+     Ulak.phoneValue(box) -> "+905551112233" (or "" when empty)
+  */
+  var DIAL_CODES = { tr: "+90", es: "+34", en: "+90" };
+
+  Ulak.defaultDialCode = function () {
+    var c = document.documentElement.getAttribute("data-culture") || "tr";
+    return DIAL_CODES[c] || "+90";
+  };
+
+  var KNOWN_CC = ["+90", "+34", "+49", "+44", "+33", "+39", "+31", "+1"];
+
+  function splitPhone(raw) {
+    raw = (raw || "").replace(/[^\d+]/g, "");
+    var hit = KNOWN_CC.filter(function (k) { return raw.indexOf(k) === 0; })[0];
+    if (hit) return [hit, raw.slice(hit.length)];
+    var m = /^(\+\d{1,3})(\d+)$/.exec(raw);
+    return m ? [m[1], m[2]] : ["", raw.replace(/^\+/, "")];
+  }
+
+  /** Set a wired .phone-input box from a full "+90555..." value (or "" to clear). */
+  Ulak.setPhone = function (box, full) {
+    var cc = box.querySelector(".phone-cc");
+    var nat = box.querySelector(".phone-nat");
+    var parts = splitPhone(full);
+    if (cc) cc.value = parts[0] || box.dataset.cc || Ulak.defaultDialCode();
+    nat.value = formatNational(parts[1]);
+    var hidden = box.querySelector(".phone-full");
+    if (hidden) hidden.value = Ulak.phoneValue(box);
+  };
+
+  Ulak.phoneValue = function (box) {
+    var ccEl = box.querySelector(".phone-cc");
+    var natEl = box.querySelector(".phone-nat");
+    var cc = ((ccEl && ccEl.value) || box.dataset.cc || Ulak.defaultDialCode()).replace(/[^\d+]/g, "");
+    if (cc && cc.charAt(0) !== "+") cc = "+" + cc;
+    var nat = (natEl.value || "").replace(/\D/g, "").replace(/^0+/, "");
+    return nat ? cc + nat : "";
+  };
+
+  function formatNational(digits) {
+    var d = digits.replace(/\D/g, "").replace(/^0+/, "").slice(0, 10);
+    if (d.length > 8) return d.slice(0, 3) + " " + d.slice(3, 6) + " " + d.slice(6, 8) + " " + d.slice(8);
+    if (d.length > 6) return d.slice(0, 3) + " " + d.slice(3, 6) + " " + d.slice(6);
+    if (d.length > 3) return d.slice(0, 3) + " " + d.slice(3);
+    return d;
+  }
+
+  Ulak.wirePhones = function (root) {
+    (root || document).querySelectorAll(".phone-input").forEach(function (box) {
+      if (box.__wired) return;
+      box.__wired = true;
+      var cc = box.querySelector(".phone-cc");
+      var nat = box.querySelector(".phone-nat");
+      var full = box.querySelector(".phone-full");
+      if (!nat) return;
+
+      // hydrate from a server-rendered full value (e.g. after a validation error)
+      if (full && full.value && !nat.value) {
+        var parts = splitPhone(full.value);
+        if (cc && parts[0]) cc.value = parts[0];
+        nat.value = parts[1];
+      }
+      if (cc && !cc.value) cc.value = box.dataset.cc || Ulak.defaultDialCode();
+      function sync() { if (full) full.value = Ulak.phoneValue(box); }
+
+      if (cc) {
+        cc.addEventListener("input", function () {
+          var v = cc.value.replace(/[^\d+]/g, "");
+          if (v && v.charAt(0) !== "+") v = "+" + v;
+          cc.value = v.slice(0, 4);
+          sync();
+        });
+      }
+      nat.addEventListener("input", function () {
+        var start = nat.selectionStart, before = nat.value.length;
+        nat.value = formatNational(nat.value);
+        // keep the caret roughly in place when a space is auto-inserted
+        var delta = nat.value.length - before;
+        if (start !== null) nat.setSelectionRange(start + delta, start + delta);
+        sync();
+      });
+      nat.value = formatNational(nat.value);
+      sync();
+
+      var form = box.closest("form");
+      if (form) form.addEventListener("submit", sync);
+    });
+  };
+
   /* ---------- modal ---------- */
   Ulak.modal = function (id) {
     var backdrop = typeof id === "string" ? document.getElementById(id) : id;
@@ -253,5 +349,6 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     Ulak.initTheme();
+    Ulak.wirePhones();
   });
 })(window, document);

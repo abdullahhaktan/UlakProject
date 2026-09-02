@@ -38,7 +38,8 @@ public sealed class AuthAppService
 
     public async Task<AuthResult> LoginAsync(LoginRequest request, CancellationToken ct)
     {
-        var user = await _users.GetByPhoneAsync(request.Phone.Trim(), ct);
+        var phone = Ulak.Shared.PhoneNumber.Normalize(request.Phone) ?? request.Phone.Trim();
+        var user = await _users.GetByPhoneAsync(phone, ct);
 
         if (user is null || !user.IsActive || !_passwordHasher.Verify(request.Password, user.PasswordHash))
         {

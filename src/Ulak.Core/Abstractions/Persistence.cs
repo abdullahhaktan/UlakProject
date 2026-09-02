@@ -12,7 +12,7 @@ public interface IUserRepository
 {
     Task<AppUserWithHash?> GetByPhoneAsync(string phone, CancellationToken ct);
 
-    Task<IReadOnlyList<DriverLookup>> ListDriversAsync(int companyId, CancellationToken ct);
+    Task<IReadOnlyList<DriverLookup>> ListDriversAsync(int companyId, bool includeInactive, CancellationToken ct);
 
     /// <summary>Self-service sign-up: new company + its first Admin. Returns the Admin.</summary>
     Task<AppUser> SignUpCompanyAsync(
@@ -22,10 +22,17 @@ public interface IUserRepository
     Task<AppUser> CreateDriverAsync(
         int companyId, string name, string phone, string passwordHash, CancellationToken ct);
 
+    /// <summary>Admin edits a driver's name / phone. Throws on a duplicate phone.</summary>
+    Task<AppUser> UpdateDriverAsync(
+        int companyId, int driverId, string name, string phone, CancellationToken ct);
+
+    /// <summary>Admin activates or deactivates a driver (a deactivated driver can't log in).</summary>
+    Task SetDriverActiveAsync(int companyId, int driverId, bool isActive, CancellationToken ct);
+
     Task ChangePasswordAsync(int userId, string newPasswordHash, CancellationToken ct);
 }
 
-public sealed record DriverLookup(int Id, string Name, string Phone);
+public sealed record DriverLookup(int Id, string Name, string Phone, bool IsActive, int OpenDeliveries);
 
 public interface ICompanyRepository
 {

@@ -152,4 +152,16 @@
   <data name="Drivers_TempHint" xml:space="preserve"><value>Share this temporary password with the driver — they will be asked to change it on first login:</value></data>
   <data name="Drivers_Create" xml:space="preserve"><value>Create</value></data>
   <data name="Drivers_Required" xml:space="preserve"><value>Name and phone are required.</value></data>
+  <data name="Drivers_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Drivers_Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Drivers_Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Drivers_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Drivers_EditTitle" xml:space="preserve"><value>Edit driver</value></data>
+  <data name="Drivers_Deactivate" xml:space="preserve"><value>Deactivate</value></data>
+  <data name="Drivers_Activate" xml:space="preserve"><value>Activate</value></data>
+  <data name="Drivers_ShowInactive" xml:space="preserve"><value>Show inactive</value></data>
+  <data name="Drivers_ShowActiveOnly" xml:space="preserve"><value>Active only</value></data>
+  <data name="Drivers_OpenDeliveries" xml:space="preserve"><value>Open deliveries</value></data>
+  <data name="Drivers_DeactivateConfirm" xml:space="preserve"><value>Deactivate {0}? They won't be able to sign in and can't be assigned new deliveries.</value></data>
+  <data name="Phone_CountryCode" xml:space="preserve"><value>Country code</value></data>
 </root>

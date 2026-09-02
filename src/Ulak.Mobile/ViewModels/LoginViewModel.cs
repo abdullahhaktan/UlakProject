@@ -42,12 +42,19 @@ public sealed partial class LoginViewModel : BaseViewModel
             return;
         }
 
+        var phone = Ulak.Shared.PhoneNumber.Normalize(Phone);
+        if (phone is null)
+        {
+            ErrorMessage = "Geçerli bir telefon numarası girin.";
+            return;
+        }
+
         AppConfig.SetApiBaseUrl(ApiBaseUrl);
 
         try
         {
             IsBusy = true;
-            var auth = await _api.LoginAsync(Phone.Trim(), Password, CancellationToken.None);
+            var auth = await _api.LoginAsync(phone, Password, CancellationToken.None);
 
             if (auth.User.MustChangePassword)
             {

@@ -32,7 +32,7 @@ public sealed class DeliveriesController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Drivers(CancellationToken ct) =>
-        Json(await _api.GetDriversAsync(ct) ?? []);
+        Json(await _api.GetDriversAsync(includeInactive: false, ct) ?? []);
 
     [HttpPost]
     [ValidateAntiForgeryToken]

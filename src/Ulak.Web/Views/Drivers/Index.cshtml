@@ -1,14 +1,18 @@
-@model IReadOnlyList<Ulak.Shared.Admin.DriverOption>
+@model DriversViewModel
 @{
     ViewData["Title"] = L["Nav_Drivers"].Value;
+    var toggleUrl = Url.Action("Index", new { showInactive = !Model.ShowInactive });
 }
 
 <div class="page-head">
     <div>
         <h1>@L["Nav_Drivers"]</h1>
-        <p class="sub">@string.Format(L["Drivers_Subtitle"].Value, Model.Count)</p>
+        <p class="sub">@string.Format(L["Drivers_Subtitle"].Value, Model.Drivers.Count(d => d.IsActive))</p>
     </div>
     <div class="page-actions">
+        <a class="btn btn-ghost btn-sm" href="@toggleUrl">
+            @(Model.ShowInactive ? L["Drivers_ShowActiveOnly"] : L["Drivers_ShowInactive"])
+        </a>
         <button class="btn btn-primary" id="btn-new-driver" type="button">
             <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             @L["Drivers_Add"]
@@ -19,17 +23,37 @@
 <div class="table-card">
     <div class="table-scroll">
         <table class="data">
-            <thead><tr><th>@L["Drivers_Name"]</th><th>@L["Delivery_Phone"]</th></tr></thead>
+            <thead><tr>
+                <th>@L["Drivers_Name"]</th><th>@L["Delivery_Phone"]</th>
+                <th>@L["Drivers_OpenDeliveries"]</th><th>@L["Drivers_Status"]</th><th></th>
+            </tr></thead>
             <tbody id="drivers-body">
-                @if (Model.Count == 0)
+                @if (Model.Drivers.Count == 0)
                 {
-                    <tr><td colspan="2" class="cell-empty">@L["Drivers_Empty"]</td></tr>
+                    <tr><td colspan="5" class="cell-empty">@L["Drivers_Empty"]</td></tr>
                 }
-                @foreach (var d in Model)
+                @foreach (var d in Model.Drivers)
                 {
-                    <tr>
-                        <td><div class="driver-name"><span class="dot"></span><span class="cell-primary">@d.Name</span></div></td>
-                        <td class="cell-mono">@d.Phone</td>
+                    <tr data-id="@d.Id" class="@(d.IsActive ? "" : "row-inactive")">
+                        <td><div class="driver-name"><span class="dot"></span><span class="cell-primary js-name">@d.Name</span></div></td>
+                        <td class="cell-mono js-phone">@d.Phone</td>
+                        <td class="cell-muted tabular">@d.OpenDeliveries</td>
+                        <td>
+                            <span class="pill @(d.IsActive ? "ok" : "pending")">
+                                @(d.IsActive ? L["Drivers_Active"] : L["Drivers_Inactive"])
+                            </span>
+                        </td>
+                        <td class="row-actions">
+                            @if (d.IsActive)
+                            {
+                                <button class="link-btn js-edit" type="button">@L["Drivers_Edit"]</button>
+                                <button class="link-btn js-deactivate" type="button">@L["Drivers_Deactivate"]</button>
+                            }
+                            else
+                            {
+                                <button class="link-btn js-activate" type="button">@L["Drivers_Activate"]</button>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -40,7 +64,7 @@
 <div class="modal-backdrop" id="modal-driver">
     <div class="modal" role="dialog" aria-modal="true">
         <div class="modal-head">
-            <h3>@L["Drivers_Add"]</h3>
+            <h3 id="d-title">@L["Drivers_Add"]</h3>
             <button class="icon-btn" type="button" data-close aria-label="@L["Common_Cancel"]">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
             </button>
@@ -48,9 +72,14 @@
         <div class="modal-body">
             <div id="d-error" class="alert alert-danger hidden"></div>
             <div id="d-form">
-                <label class="field-block" style="margin-bottom:12px"><span>@L["Drivers_Name"]</span><input id="d-name" placeholder="@L["Drivers_NamePlaceholder"]" /></label>
+                <label class="field-block" style="margin-bottom:12px"><span>@L["Drivers_Name"]</span>
+                    <input id="d-name" placeholder="@L["Drivers_NamePlaceholder"]" />
+                </label>
                 <label class="field-block"><span>@L["Delivery_Phone"]</span>
-                    <div class="phone-input"><span class="phone-prefix">+90</span><input id="d-phone" placeholder="5xx xxx xx xx" /></div>
+                    <div class="phone-input" id="d-phone">
+                        <input class="phone-cc" inputmode="tel" aria-label="@L["Phone_CountryCode"]" />
+                        <input class="phone-nat" inputmode="numeric" placeholder="5xx xxx xx xx" />
+                    </div>
                 </label>
             </div>
             <div id="d-result" class="alert alert-ok hidden">
@@ -67,38 +96,95 @@
 </div>
 
 @section Scripts {
+    @{
+        var i18nJson = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            error = L["Common_Error"].Value,
+            required = L["Drivers_Required"].Value,
+            create = L["Drivers_Create"].Value,
+            save = L["Common_Save"].Value,
+            addTitle = L["Drivers_Add"].Value,
+            editTitle = L["Drivers_EditTitle"].Value,
+            active = L["Drivers_Active"].Value,
+            inactive = L["Drivers_Inactive"].Value,
+            activate = L["Drivers_Activate"].Value,
+            deactivate = L["Drivers_Deactivate"].Value,
+            edit = L["Drivers_Edit"].Value,
+            deactivateConfirm = L["Drivers_DeactivateConfirm"].Value
+        });
+    }
     <script>
         (function () {
             var token = Ulak.csrf();
             var modal = Ulak.modal('modal-driver');
-            var i18n = { error: '@L["Common_Error"]', required: '@L["Drivers_Required"]', create: '@L["Drivers_Create"]' };
+            var i18n = @Html.Raw(i18nJson);
+            var urls = {
+                create: '@Url.Action("Create", "Drivers")',
+                update: '@Url.Action("Update", "Drivers")',
+                setActive: '@Url.Action("SetActive", "Drivers")'
+            };
 
-            document.getElementById('btn-new-driver').addEventListener('click', function () {
+            var box = document.getElementById('d-phone');
+            var editingId = 0;
+
+            function openModal(mode, row) {
                 document.getElementById('d-error').classList.add('hidden');
                 document.getElementById('d-result').classList.add('hidden');
                 document.getElementById('d-form').classList.remove('hidden');
-                document.getElementById('d-name').value = '';
-                document.getElementById('d-phone').value = '';
                 var save = document.getElementById('d-save');
-                save.disabled = false; save.textContent = i18n.create; save.classList.remove('hidden');
+                save.disabled = false; save.classList.remove('hidden');
+                if (mode === 'edit') {
+                    editingId = parseInt(row.dataset.id, 10);
+                    document.getElementById('d-title').textContent = i18n.editTitle;
+                    save.textContent = i18n.save;
+                    document.getElementById('d-name').value = row.querySelector('.js-name').textContent.trim();
+                    Ulak.setPhone(box, row.querySelector('.js-phone').textContent.trim());
+                } else {
+                    editingId = 0;
+                    document.getElementById('d-title').textContent = i18n.addTitle;
+                    save.textContent = i18n.create;
+                    document.getElementById('d-name').value = '';
+                    Ulak.setPhone(box, '');
+                }
                 modal.open();
-            });
+            }
 
-            document.getElementById('d-save').addEventListener('click', function () {
-                var phone = document.getElementById('d-phone').value.trim();
-                if (phone && phone.charAt(0) !== '+') phone = '+90' + phone.replace(/[^0-9]/g, '');
-                var body = { name: document.getElementById('d-name').value.trim(), phone: phone };
-                var err = document.getElementById('d-error');
-                if (!body.name || !body.phone) {
-                    err.textContent = i18n.required; err.classList.remove('hidden');
+            document.getElementById('btn-new-driver').addEventListener('click', function () { openModal('add'); });
+
+            document.getElementById('drivers-body').addEventListener('click', function (e) {
+                var row = e.target.closest('tr[data-id]');
+                if (!row) return;
+                if (e.target.classList.contains('js-edit')) { openModal('edit', row); return; }
+                if (e.target.classList.contains('js-deactivate')) {
+                    var name = row.querySelector('.js-name').textContent.trim();
+                    if (!confirm(i18n.deactivateConfirm.replace('{0}', name))) return;
+                    setActive(row, false);
                     return;
                 }
+                if (e.target.classList.contains('js-activate')) { setActive(row, true); return; }
+            });
+
+            function setActive(row, active) {
+                jQuery.ajax({
+                    url: urls.setActive + '?id=' + row.dataset.id + '&active=' + active,
+                    method: 'POST', headers: { 'RequestVerificationToken': token }
+                }).done(function () { location.reload(); })
+                  .fail(function (x) { alert((x.responseJSON && x.responseJSON.message) || i18n.error); });
+            }
+
+            document.getElementById('d-save').addEventListener('click', function () {
+                var body = { name: document.getElementById('d-name').value.trim(), phone: Ulak.phoneValue(box) };
+                var err = document.getElementById('d-error');
+                if (!body.name || !body.phone) { err.textContent = i18n.required; err.classList.remove('hidden'); return; }
                 var save = document.getElementById('d-save');
                 save.disabled = true;
+                var isEdit = editingId > 0;
                 jQuery.ajax({
-                    url: '@Url.Action("Create", "Drivers")', method: 'POST', contentType: 'application/json',
+                    url: isEdit ? (urls.update + '?id=' + editingId) : urls.create,
+                    method: 'POST', contentType: 'application/json',
                     headers: { 'RequestVerificationToken': token }, data: JSON.stringify(body)
                 }).done(function (res) {
+                    if (isEdit) { location.reload(); return; }
                     err.classList.add('hidden');
                     document.getElementById('d-form').classList.add('hidden');
                     document.getElementById('d-temp').textContent = res.tempPassword;
@@ -108,8 +194,14 @@
                     var empty = tbody.querySelector('.cell-empty');
                     if (empty) empty.closest('tr').remove();
                     var tr = document.createElement('tr');
-                    tr.innerHTML = '<td><div class="driver-name"><span class="dot"></span><span class="cell-primary">' +
-                        Ulak.esc(res.name) + '</span></div></td><td class="cell-mono">' + Ulak.esc(res.phone) + '</td>';
+                    tr.dataset.id = res.id;
+                    tr.innerHTML =
+                        '<td><div class="driver-name"><span class="dot"></span><span class="cell-primary js-name">' + Ulak.esc(res.name) + '</span></div></td>' +
+                        '<td class="cell-mono js-phone">' + Ulak.esc(res.phone) + '</td>' +
+                        '<td class="cell-muted tabular">0</td>' +
+                        '<td><span class="pill ok">' + Ulak.esc(i18n.active) + '</span></td>' +
+                        '<td class="row-actions"><button class="link-btn js-edit" type="button">' + Ulak.esc(i18n.edit) + '</button>' +
+                        '<button class="link-btn js-deactivate" type="button">' + Ulak.esc(i18n.deactivate) + '</button></td>';
                     tbody.appendChild(tr);
                 }).fail(function (x) {
                     save.disabled = false;
