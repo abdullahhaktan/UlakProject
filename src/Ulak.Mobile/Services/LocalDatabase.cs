@@ -30,6 +30,7 @@ public sealed class LocalDatabase
                     SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
                 await connection.CreateTableAsync<PendingProof>();
                 await connection.CreateTableAsync<PendingPhoto>();
+                await connection.CreateTableAsync<CachedDelivery>();
 
                 // Publish the connection only once every table exists. Assigning
                 // _connection earlier lets a concurrent caller (the sync loop)
@@ -119,6 +120,41 @@ public sealed class LocalDatabase
         }
 
         return failed.Count;
+    }
+
+    // --- offline delivery cache ---
+
+    /// <summary>Replaces the whole cached list with the rows from the latest fetch.</summary>
+    public async Task ReplaceCachedDeliveriesAsync(IReadOnlyList<CachedDelivery> deliveries)
+    {
+        var db = await GetConnectionAsync();
+        await db.RunInTransactionAsync(tx =>
+        {
+            tx.DeleteAll<CachedDelivery>();
+            if (deliveries.Count > 0)
+            {
+                tx.InsertAll(deliveries);
+            }
+        });
+    }
+
+    public async Task<List<CachedDelivery>> GetCachedDeliveriesAsync()
+    {
+        var db = await GetConnectionAsync();
+        return await db.Table<CachedDelivery>().OrderByDescending(d => d.CreatedAtUtc).ToListAsync();
+    }
+
+    public async Task<CachedDelivery?> GetCachedDeliveryAsync(int id)
+    {
+        var db = await GetConnectionAsync();
+        return await db.Table<CachedDelivery>().Where(d => d.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<DateTimeOffset?> GetCacheTimestampAsync()
+    {
+        var db = await GetConnectionAsync();
+        var row = await db.Table<CachedDelivery>().FirstOrDefaultAsync();
+        return row?.CachedAtUtc;
     }
 
     public async Task DeleteProofAsync(PendingProof proof)

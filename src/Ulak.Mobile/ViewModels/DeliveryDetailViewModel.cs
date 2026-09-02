@@ -8,8 +8,13 @@ namespace Ulak.Mobile.ViewModels;
 public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly ApiClient _api;
+    private readonly LocalDatabase _db;
 
-    public DeliveryDetailViewModel(ApiClient api) => _api = api;
+    public DeliveryDetailViewModel(ApiClient api, LocalDatabase db)
+    {
+        _api = api;
+        _db = db;
+    }
 
     [ObservableProperty]
     private int _deliveryId;
@@ -42,7 +47,16 @@ public sealed partial class DeliveryDetailViewModel : BaseViewModel, IQueryAttri
         }
         catch (HttpRequestException)
         {
-            ErrorMessage = "Çevrimdışı — teslimat detayı alınamadı.";
+            var cached = await _db.GetCachedDeliveryAsync(DeliveryId);
+            if (cached is not null)
+            {
+                Delivery = cached.ToDetail();
+                ErrorMessage = "Çevrimdışı — kayıtlı bilgiler gösteriliyor.";
+            }
+            else
+            {
+                ErrorMessage = "Çevrimdışı — teslimat detayı alınamadı.";
+            }
         }
         catch (Exception ex)
         {
