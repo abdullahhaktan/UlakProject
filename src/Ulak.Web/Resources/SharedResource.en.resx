@@ -51,72 +51,105 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
-  <data name="Nav_Dashboard"><value>Dashboard</value></data>
-  <data name="Nav_Deliveries"><value>Deliveries</value></data>
-  <data name="Nav_Proofs"><value>Proofs</value></data>
-  <data name="Nav_Logout"><value>Sign out</value></data>
-
-  <data name="Login_Title"><value>Ops panel sign in</value></data>
-  <data name="Login_Subtitle"><value>Sign in with your operations account.</value></data>
-  <data name="Login_OpsOnly"><value>This panel is for operations users only.</value></data>
-  <data name="Login_Invalid"><value>Invalid phone or password.</value></data>
-  <data name="Login_Phone"><value>Phone</value></data>
-  <data name="Login_Password"><value>Password</value></data>
-  <data name="Login_Submit"><value>Sign in</value></data>
-  <data name="Login_DemoHint"><value>Demo account:</value></data>
-
-  <data name="Dashboard_Title"><value>Overview</value></data>
-  <data name="Dashboard_Pending"><value>Pending</value></data>
-  <data name="Dashboard_Delivered"><value>Delivered</value></data>
-  <data name="Dashboard_Failed"><value>Failed</value></data>
-  <data name="Dashboard_Unassigned"><value>Unassigned</value></data>
-  <data name="Dashboard_Last7Days"><value>Proofs — last 7 days</value></data>
-
-  <data name="Deliveries_Title"><value>Deliveries</value></data>
-  <data name="Deliveries_New"><value>New delivery</value></data>
-  <data name="Deliveries_SearchHint"><value>order ref or recipient</value></data>
-  <data name="Deliveries_Assign"><value>Assign driver</value></data>
-  <data name="Deliveries_Assigned"><value>Driver assigned</value></data>
-
-  <data name="Delivery_OrderRef"><value>Order ref</value></data>
-  <data name="Delivery_Recipient"><value>Recipient</value></data>
-  <data name="Delivery_Phone"><value>Phone</value></data>
-  <data name="Delivery_Address"><value>Address</value></data>
-  <data name="Delivery_Note"><value>Note</value></data>
-  <data name="Delivery_HasProof"><value>Proof</value></data>
-
-  <data name="Proofs_Title"><value>Proofs of delivery</value></data>
-  <data name="Proofs_ExportExcel"><value>Export Excel</value></data>
-  <data name="Proofs_SearchHint"><value>order ref</value></data>
-
-  <data name="Proof_Title"><value>Proof</value></data>
-  <data name="Proof_DownloadPdf"><value>Download PDF</value></data>
-  <data name="Proof_DeliveryInfo"><value>Delivery information</value></data>
-  <data name="Proof_SignedBy"><value>Signed by</value></data>
-  <data name="Proof_FailureReason"><value>Failure reason</value></data>
-  <data name="Proof_CapturedAt"><value>Captured at</value></data>
-  <data name="Proof_SyncedAt"><value>Synced at</value></data>
-  <data name="Proof_OpenMap"><value>open map</value></data>
-  <data name="Proof_Signature"><value>Signature</value></data>
-  <data name="Proof_Photos"><value>Photos</value></data>
-  <data name="Proof_NoPhotos"><value>No photos.</value></data>
-  <data name="Proof_Location"><value>Location</value></data>
-
-  <data name="Status_Pending"><value>Pending</value></data>
-  <data name="Status_Delivered"><value>Delivered</value></data>
-  <data name="Status_Failed"><value>Failed</value></data>
-
-  <data name="Common_Search"><value>Search</value></data>
-  <data name="Common_Status"><value>Status</value></data>
-  <data name="Common_Driver"><value>Driver</value></data>
-  <data name="Common_All"><value>All</value></data>
-  <data name="Common_Apply"><value>Apply</value></data>
-  <data name="Common_Cancel"><value>Cancel</value></data>
-  <data name="Common_Save"><value>Save</value></data>
-  <data name="Common_Saved"><value>Saved</value></data>
-  <data name="Common_Back"><value>Back</value></data>
-  <data name="Common_From"><value>From</value></data>
-  <data name="Common_To"><value>To</value></data>
-  <data name="Common_CreatedAt"><value>Created at</value></data>
-  <data name="Common_ApiUnavailable"><value>The API is unavailable right now.</value></data>
+  <data name="Nav_Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="Nav_Deliveries" xml:space="preserve"><value>Deliveries</value></data>
+  <data name="Nav_Drivers" xml:space="preserve"><value>Drivers</value></data>
+  <data name="Nav_Proofs" xml:space="preserve"><value>Proofs</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Sign out</value></data>
+  <data name="Nav_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Dark theme</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Light theme</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Ops panel sign in</value></data>
+  <data name="Login_Subtitle" xml:space="preserve"><value>Sign in with your operations account.</value></data>
+  <data name="Login_OpsOnly" xml:space="preserve"><value>This panel is for operations users only.</value></data>
+  <data name="Login_Invalid" xml:space="preserve"><value>Invalid phone or password.</value></data>
+  <data name="Login_Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Login_Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Login_DemoHint" xml:space="preserve"><value>Demo account:</value></data>
+  <data name="Login_NoCompany" xml:space="preserve"><value>No company yet?</value></data>
+  <data name="Login_SignUpLink" xml:space="preserve"><value>Create a company account</value></data>
+  <data name="SignUp_Title" xml:space="preserve"><value>Company sign-up</value></data>
+  <data name="SignUp_Lead" xml:space="preserve"><value>Create your company and start in minutes.</value></data>
+  <data name="SignUp_CompanyName" xml:space="preserve"><value>Company name</value></data>
+  <data name="SignUp_CompanyPlaceholder" xml:space="preserve"><value>e.g. Yildiz Logistics</value></data>
+  <data name="SignUp_AdminName" xml:space="preserve"><value>Your name</value></data>
+  <data name="SignUp_AdminPlaceholder" xml:space="preserve"><value>Full name</value></data>
+  <data name="SignUp_Submit" xml:space="preserve"><value>Create account</value></data>
+  <data name="SignUp_HaveAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="SignUp_LoginLink" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Dashboard_Title" xml:space="preserve"><value>Overview</value></data>
+  <data name="Dashboard_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Dashboard_Delivered" xml:space="preserve"><value>Delivered</value></data>
+  <data name="Dashboard_Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Dashboard_Unassigned" xml:space="preserve"><value>Unassigned</value></data>
+  <data name="Dashboard_Last7Days" xml:space="preserve"><value>Proofs — last 7 days</value></data>
+  <data name="Dashboard_PendingNote" xml:space="preserve"><value>Assigned to a driver, awaiting proof of delivery</value></data>
+  <data name="Dashboard_DeliveredNote" xml:space="preserve"><value>Closed with a signed proof</value></data>
+  <data name="Dashboard_FailedNote" xml:space="preserve"><value>Deliveries that could not be completed</value></data>
+  <data name="Dashboard_UnassignedNote" xml:space="preserve"><value>Not routed to a driver yet</value></data>
+  <data name="Dashboard_AsTable" xml:space="preserve"><value>View as table</value></data>
+  <data name="Dashboard_AsChart" xml:space="preserve"><value>View as chart</value></data>
+  <data name="Deliveries_Title" xml:space="preserve"><value>Deliveries</value></data>
+  <data name="Deliveries_New" xml:space="preserve"><value>New delivery</value></data>
+  <data name="Deliveries_SearchHint" xml:space="preserve"><value>order ref or recipient</value></data>
+  <data name="Deliveries_Assign" xml:space="preserve"><value>Assign driver</value></data>
+  <data name="Deliveries_Assigned" xml:space="preserve"><value>Driver assigned</value></data>
+  <data name="Deliveries_Subtitle" xml:space="preserve"><value>All deliveries and their status</value></data>
+  <data name="Deliveries_Empty" xml:space="preserve"><value>No deliveries found.</value></data>
+  <data name="Delivery_OrderRef" xml:space="preserve"><value>Order ref</value></data>
+  <data name="Delivery_Recipient" xml:space="preserve"><value>Recipient</value></data>
+  <data name="Delivery_Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Delivery_Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Delivery_Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Delivery_HasProof" xml:space="preserve"><value>Proof</value></data>
+  <data name="Proofs_Title" xml:space="preserve"><value>Proofs of delivery</value></data>
+  <data name="Proofs_ExportExcel" xml:space="preserve"><value>Export Excel</value></data>
+  <data name="Proofs_SearchHint" xml:space="preserve"><value>order ref</value></data>
+  <data name="Proofs_Subtitle" xml:space="preserve"><value>Signature and photo records</value></data>
+  <data name="Proofs_Empty" xml:space="preserve"><value>No proofs found.</value></data>
+  <data name="Proof_Title" xml:space="preserve"><value>Proof</value></data>
+  <data name="Proof_DownloadPdf" xml:space="preserve"><value>Download PDF</value></data>
+  <data name="Proof_DeliveryInfo" xml:space="preserve"><value>Delivery information</value></data>
+  <data name="Proof_SignedBy" xml:space="preserve"><value>Signed by</value></data>
+  <data name="Proof_FailureReason" xml:space="preserve"><value>Failure reason</value></data>
+  <data name="Proof_CapturedAt" xml:space="preserve"><value>Captured at</value></data>
+  <data name="Proof_SyncedAt" xml:space="preserve"><value>Synced at</value></data>
+  <data name="Proof_OpenMap" xml:space="preserve"><value>open map</value></data>
+  <data name="Proof_Signature" xml:space="preserve"><value>Signature</value></data>
+  <data name="Proof_Photos" xml:space="preserve"><value>Photos</value></data>
+  <data name="Proof_NoPhotos" xml:space="preserve"><value>No photos.</value></data>
+  <data name="Proof_Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Proof_SubtitleFmt" xml:space="preserve"><value>Delivery record for order {0}</value></data>
+  <data name="Status_Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Status_Delivered" xml:space="preserve"><value>Delivered</value></data>
+  <data name="Status_Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Common_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Common_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Common_Driver" xml:space="preserve"><value>Driver</value></data>
+  <data name="Common_All" xml:space="preserve"><value>All</value></data>
+  <data name="Common_Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Common_Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="Common_Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Common_From" xml:space="preserve"><value>From</value></data>
+  <data name="Common_To" xml:space="preserve"><value>To</value></data>
+  <data name="Common_CreatedAt" xml:space="preserve"><value>Created at</value></data>
+  <data name="Common_ApiUnavailable" xml:space="preserve"><value>The API is unavailable right now.</value></data>
+  <data name="Common_Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Common_Error" xml:space="preserve"><value>Something went wrong.</value></data>
+  <data name="Common_RecordCount" xml:space="preserve"><value>{0} records</value></data>
+  <data name="Common_Prev" xml:space="preserve"><value>Previous</value></data>
+  <data name="Common_Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Drivers_Subtitle" xml:space="preserve"><value>{0} drivers on the field team</value></data>
+  <data name="Drivers_Add" xml:space="preserve"><value>Add driver</value></data>
+  <data name="Drivers_Name" xml:space="preserve"><value>Full name</value></data>
+  <data name="Drivers_NamePlaceholder" xml:space="preserve"><value>e.g. Kemal Aksoy</value></data>
+  <data name="Drivers_Empty" xml:space="preserve"><value>No drivers yet. Start with "Add driver".</value></data>
+  <data name="Drivers_Created" xml:space="preserve"><value>Driver created.</value></data>
+  <data name="Drivers_TempHint" xml:space="preserve"><value>Share this temporary password with the driver — they will be asked to change it on first login:</value></data>
+  <data name="Drivers_Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Drivers_Required" xml:space="preserve"><value>Name and phone are required.</value></data>
 </root>

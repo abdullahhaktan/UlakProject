@@ -1,42 +1,42 @@
 @model LoginViewModel
 @{
     ViewData["Title"] = L["Login_Title"].Value;
-    Layout = "_Layout";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
-        <div class="card shadow-sm mt-5">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-3">@L["Login_Title"]</h1>
-                <p class="text-muted small">@L["Login_Subtitle"]</p>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <svg class="mark" viewBox="0 0 24 24" fill="none"><path d="M4 8.5 12 4l8 4.5v7L12 20l-8-4.5v-7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 8.5 12 13l8-4.5M12 13v7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span class="word">Ulak</span><span class="pod">POD</span>
+        </div>
+        <h1>@L["Login_Title"]</h1>
+        <p class="lead">@L["Login_Subtitle"]</p>
 
-                @if (!string.IsNullOrEmpty(Model.Error))
-                {
-                    <div class="alert alert-danger py-2">
-                        @(Model.Error == "OpsOnly" ? L["Login_OpsOnly"] : L["Login_Invalid"])
-                    </div>
-                }
-
-                <form asp-action="Login" method="post">
-                    <input type="hidden" asp-for="ReturnUrl" />
-                    <div class="mb-3">
-                        <label asp-for="Phone" class="form-label">@L["Login_Phone"]</label>
-                        <input asp-for="Phone" class="form-control" autocomplete="username" placeholder="+9055..." />
-                        <span asp-validation-for="Phone" class="text-danger small"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">@L["Login_Password"]</label>
-                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">@L["Login_Submit"]</button>
-                </form>
-
-                <hr />
-                <p class="small mb-1">Firmanız yok mu? <a asp-action="SignUp">Firma kaydı oluşturun</a></p>
-                <p class="text-muted small mb-0">@L["Login_DemoHint"]<br /><code>+905550001122 / Ops12345!</code></p>
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-danger">
+                @(Model.Error == "OpsOnly" ? L["Login_OpsOnly"] : L["Login_Invalid"])
             </div>
+        }
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <label class="field-block">
+                <span>@L["Login_Phone"]</span>
+                <input asp-for="Phone" autocomplete="username" placeholder="+9055..." />
+                <span asp-validation-for="Phone" class="field-error"></span>
+            </label>
+            <label class="field-block">
+                <span>@L["Login_Password"]</span>
+                <input asp-for="Password" type="password" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">@L["Login_Submit"]</button>
+        </form>
+
+        <div class="auth-foot">
+            <p>@L["Login_NoCompany"] <a asp-action="SignUp">@L["Login_SignUpLink"]</a></p>
+            <p style="margin-top:6px">@L["Login_DemoHint"] <code>+905550001122 / Ops12345!</code></p>
         </div>
     </div>
 </div>

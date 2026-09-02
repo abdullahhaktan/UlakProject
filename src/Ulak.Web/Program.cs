@@ -17,7 +17,7 @@ var supportedCultures = builder.Configuration.GetSection("Localization:Supported
                         ?? ["tr", "en"];
 var defaultCulture = builder.Configuration["Localization:DefaultCulture"] ?? "tr";
 
-// --- localization (bilingual TR/EN via .resx) ---
+// --- localization (TR / EN / ES via .resx) ---
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
