@@ -3,83 +3,105 @@
 @{
     ViewData["Title"] = $"{L["Proof_Title"].Value} #{Model.Id}";
     var hasGps = Model.CapturedLat.HasValue && Model.CapturedLng.HasValue;
+    var ok = Model.Status == "Delivered";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">@L["Proof_Title"] #@Model.Id
-        <span class="badge text-bg-@(Model.Status == "Delivered" ? "success" : "danger") align-middle">@Model.Status</span>
-    </h1>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-primary" href="@Url.Action("Pdf", "Proofs", new { id = Model.Id })">@L["Proof_DownloadPdf"]</a>
-        <a class="btn btn-outline-secondary" asp-action="Index">@L["Common_Back"]</a>
+<a class="breadcrumb" asp-action="Index">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    @L["Proofs_Title"]
+</a>
+
+<div class="page-head">
+    <div>
+        <h1>@L["Proof_Title"] #@Model.Id
+            <span class="pill @(ok ? "ok" : "danger")" style="vertical-align:middle">@(ok ? L["Status_Delivered"] : L["Status_Failed"])</span>
+        </h1>
+        <p class="sub">@string.Format(L["Proof_SubtitleFmt"].Value, Model.OrderRef)</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-outline" href="@Url.Action("Pdf", "Proofs", new { id = Model.Id })">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            @L["Proof_DownloadPdf"]
+        </a>
+        <a class="btn btn-ghost" asp-action="Index">@L["Common_Back"]</a>
     </div>
 </div>
 
-<div class="row g-3">
-    <div class="col-lg-5">
-        <div class="card mb-3"><div class="card-body">
-            <h2 class="h6 text-muted">@L["Proof_DeliveryInfo"]</h2>
-            <dl class="row mb-0">
-                <dt class="col-5">@L["Delivery_OrderRef"]</dt><dd class="col-7">@Model.OrderRef</dd>
-                <dt class="col-5">@L["Delivery_Recipient"]</dt><dd class="col-7">@Model.RecipientName</dd>
-                <dt class="col-5">@L["Delivery_Phone"]</dt><dd class="col-7">@Model.RecipientPhone</dd>
-                <dt class="col-5">@L["Delivery_Address"]</dt><dd class="col-7">@Model.AddressText</dd>
-                <dt class="col-5">@L["Common_Driver"]</dt><dd class="col-7">@Model.DriverName (@Model.DriverPhone)</dd>
+<div class="detail-grid">
+    <div class="detail-stack">
+        <div class="card">
+            <div class="card-head"><h2>@L["Proof_DeliveryInfo"]</h2></div>
+            <dl class="info-list">
+                <div class="info-row"><dt>@L["Delivery_OrderRef"]</dt><dd><span class="order-chip">@Model.OrderRef</span></dd></div>
+                <div class="info-row"><dt>@L["Delivery_Recipient"]</dt><dd>@Model.RecipientName</dd></div>
+                @if (!string.IsNullOrEmpty(Model.RecipientPhone))
+                {
+                    <div class="info-row"><dt>@L["Delivery_Phone"]</dt><dd class="mono">@Model.RecipientPhone</dd></div>
+                }
+                <div class="info-row"><dt>@L["Delivery_Address"]</dt><dd>@Model.AddressText</dd></div>
+                <div class="info-row"><dt>@L["Common_Driver"]</dt><dd>@Model.DriverName <span class="cell-muted">· @Model.DriverPhone</span></dd></div>
                 @if (!string.IsNullOrEmpty(Model.RecipientSignedName))
                 {
-                    <dt class="col-5">@L["Proof_SignedBy"]</dt><dd class="col-7">@Model.RecipientSignedName</dd>
+                    <div class="info-row"><dt>@L["Proof_SignedBy"]</dt><dd class="mono">@Model.RecipientSignedName</dd></div>
                 }
                 @if (!string.IsNullOrEmpty(Model.FailureReason))
                 {
-                    <dt class="col-5">@L["Proof_FailureReason"]</dt><dd class="col-7 text-danger">@Model.FailureReason</dd>
+                    <div class="info-row"><dt>@L["Proof_FailureReason"]</dt><dd class="fail">@Model.FailureReason</dd></div>
                 }
-                <dt class="col-5">@L["Proof_CapturedAt"]</dt><dd class="col-7">@Model.CapturedAtUtc.ToString("u")</dd>
-                <dt class="col-5">@L["Proof_SyncedAt"]</dt><dd class="col-7">@Model.SyncedAtUtc.ToString("u")</dd>
+                <div class="info-row"><dt>@L["Proof_CapturedAt"]</dt><dd class="mono">@Model.CapturedAtUtc.ToString("u")</dd></div>
+                <div class="info-row"><dt>@L["Proof_SyncedAt"]</dt><dd class="mono">@Model.SyncedAtUtc.ToString("u")</dd></div>
                 @if (hasGps)
                 {
-                    <dt class="col-5">GPS</dt>
-                    <dd class="col-7">
-                        @Model.CapturedLat?.ToString("F6"), @Model.CapturedLng?.ToString("F6")
-                        <a target="_blank" href="https://www.google.com/maps?q=@Model.CapturedLat,@Model.CapturedLng">@L["Proof_OpenMap"]</a>
-                    </dd>
+                    <div class="info-row">
+                        <dt>GPS</dt>
+                        <dd class="mono">
+                            @Model.CapturedLat?.ToString("F6"), @Model.CapturedLng?.ToString("F6")
+                            <a target="_blank" href="https://www.google.com/maps?q=@Model.CapturedLat,@Model.CapturedLng">@L["Proof_OpenMap"]</a>
+                        </dd>
+                    </div>
                 }
             </dl>
-        </div></div>
+        </div>
 
         @if (!string.IsNullOrEmpty(Model.SignatureUrl))
         {
-            <div class="card mb-3"><div class="card-body">
-                <h2 class="h6 text-muted">@L["Proof_Signature"]</h2>
-                <img src="@Model.SignatureUrl" class="img-fluid border rounded bg-white" style="max-height: 200px;" alt="signature" />
-            </div></div>
+            <div class="card">
+                <div class="card-head"><h2>@L["Proof_Signature"]</h2></div>
+                <div class="sig-pad"><img src="@Model.SignatureUrl" alt="signature" /></div>
+                @if (!string.IsNullOrEmpty(Model.RecipientSignedName))
+                {
+                    <p class="sig-meta">@Model.RecipientSignedName</p>
+                }
+            </div>
         }
     </div>
 
-    <div class="col-lg-7">
-        <div class="card mb-3"><div class="card-body">
-            <h2 class="h6 text-muted">@L["Proof_Photos"] (@Model.Photos.Count)</h2>
-            <div class="row g-2">
-                @foreach (var photo in Model.Photos)
-                {
-                    <div class="col-6">
-                        <a href="@photo.Url" target="_blank">
-                            <img src="@photo.Url" class="img-fluid border rounded" alt="photo @photo.OrderIndex" />
+    <div class="detail-stack">
+        <div class="card">
+            <div class="card-head"><h2>@L["Proof_Photos"] (@Model.Photos.Count)</h2></div>
+            @if (Model.Photos.Count == 0)
+            {
+                <div class="card-body"><p class="cell-muted">@L["Proof_NoPhotos"]</p></div>
+            }
+            else
+            {
+                <div class="photo-grid">
+                    @foreach (var photo in Model.Photos)
+                    {
+                        <a class="photo-frame" href="@photo.Url" target="_blank">
+                            <img src="@photo.Url" alt="photo @photo.OrderIndex" />
                         </a>
-                    </div>
-                }
-                @if (Model.Photos.Count == 0)
-                {
-                    <p class="text-muted small">@L["Proof_NoPhotos"]</p>
-                }
-            </div>
-        </div></div>
+                    }
+                </div>
+            }
+        </div>
 
         @if (hasGps)
         {
-            <div class="card"><div class="card-body">
-                <h2 class="h6 text-muted">@L["Proof_Location"]</h2>
-                <div id="map" style="height: 260px;" class="border rounded"></div>
-            </div></div>
+            <div class="card">
+                <div class="card-head"><h2>@L["Proof_Location"]</h2></div>
+                <div class="card-body"><div id="map"></div></div>
+            </div>
         }
     </div>
 </div>
@@ -88,12 +110,11 @@
 {
     @section Scripts {
         <script>
-            // lightweight static-map fallback using OpenStreetMap embed
-            const lat = @Model.CapturedLat, lng = @Model.CapturedLng;
-            const d = 0.01;
-            $("#map").html(
-                `<iframe width="100%" height="100%" frameborder="0" style="border:0"
-                   src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-d}%2C${lat-d}%2C${lng+d}%2C${lat+d}&layer=mapnik&marker=${lat}%2C${lng}"></iframe>`);
+            var lat = @Model.CapturedLat, lng = @Model.CapturedLng, d = 0.01;
+            document.getElementById('map').innerHTML =
+                '<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=' +
+                (lng - d) + '%2C' + (lat - d) + '%2C' + (lng + d) + '%2C' + (lat + d) +
+                '&layer=mapnik&marker=' + lat + '%2C' + lng + '"></iframe>';
         </script>
     }
 }

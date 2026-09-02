@@ -51,72 +51,105 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
-  <data name="Nav_Dashboard"><value>Panel</value></data>
-  <data name="Nav_Deliveries"><value>Teslimatlar</value></data>
-  <data name="Nav_Proofs"><value>Teslimat Kanıtları</value></data>
-  <data name="Nav_Logout"><value>Çıkış</value></data>
-
-  <data name="Login_Title"><value>Operasyon paneli girişi</value></data>
-  <data name="Login_Subtitle"><value>Operasyon hesabınızla giriş yapın.</value></data>
-  <data name="Login_OpsOnly"><value>Bu panel yalnızca operasyon kullanıcıları içindir.</value></data>
-  <data name="Login_Invalid"><value>Telefon veya şifre hatalı.</value></data>
-  <data name="Login_Phone"><value>Telefon</value></data>
-  <data name="Login_Password"><value>Şifre</value></data>
-  <data name="Login_Submit"><value>Giriş yap</value></data>
-  <data name="Login_DemoHint"><value>Demo hesabı:</value></data>
-
-  <data name="Dashboard_Title"><value>Genel bakış</value></data>
-  <data name="Dashboard_Pending"><value>Bekleyen</value></data>
-  <data name="Dashboard_Delivered"><value>Teslim edildi</value></data>
-  <data name="Dashboard_Failed"><value>Teslim edilemedi</value></data>
-  <data name="Dashboard_Unassigned"><value>Atanmamış</value></data>
-  <data name="Dashboard_Last7Days"><value>Kanıtlar — son 7 gün</value></data>
-
-  <data name="Deliveries_Title"><value>Teslimatlar</value></data>
-  <data name="Deliveries_New"><value>Yeni teslimat</value></data>
-  <data name="Deliveries_SearchHint"><value>sipariş no veya alıcı</value></data>
-  <data name="Deliveries_Assign"><value>Sürücü ata</value></data>
-  <data name="Deliveries_Assigned"><value>Sürücü atandı</value></data>
-
-  <data name="Delivery_OrderRef"><value>Sipariş No</value></data>
-  <data name="Delivery_Recipient"><value>Alıcı</value></data>
-  <data name="Delivery_Phone"><value>Telefon</value></data>
-  <data name="Delivery_Address"><value>Adres</value></data>
-  <data name="Delivery_Note"><value>Not</value></data>
-  <data name="Delivery_HasProof"><value>Kanıt</value></data>
-
-  <data name="Proofs_Title"><value>Teslimat kanıtları</value></data>
-  <data name="Proofs_ExportExcel"><value>Excel'e aktar</value></data>
-  <data name="Proofs_SearchHint"><value>sipariş no</value></data>
-
-  <data name="Proof_Title"><value>Kanıt</value></data>
-  <data name="Proof_DownloadPdf"><value>PDF indir</value></data>
-  <data name="Proof_DeliveryInfo"><value>Teslimat bilgileri</value></data>
-  <data name="Proof_SignedBy"><value>İmzalayan</value></data>
-  <data name="Proof_FailureReason"><value>Başarısızlık nedeni</value></data>
-  <data name="Proof_CapturedAt"><value>Kayıt zamanı</value></data>
-  <data name="Proof_SyncedAt"><value>Senkron zamanı</value></data>
-  <data name="Proof_OpenMap"><value>haritada aç</value></data>
-  <data name="Proof_Signature"><value>İmza</value></data>
-  <data name="Proof_Photos"><value>Fotoğraflar</value></data>
-  <data name="Proof_NoPhotos"><value>Fotoğraf yok.</value></data>
-  <data name="Proof_Location"><value>Konum</value></data>
-
-  <data name="Status_Pending"><value>Bekliyor</value></data>
-  <data name="Status_Delivered"><value>Teslim edildi</value></data>
-  <data name="Status_Failed"><value>Teslim edilemedi</value></data>
-
-  <data name="Common_Search"><value>Ara</value></data>
-  <data name="Common_Status"><value>Durum</value></data>
-  <data name="Common_Driver"><value>Sürücü</value></data>
-  <data name="Common_All"><value>Tümü</value></data>
-  <data name="Common_Apply"><value>Uygula</value></data>
-  <data name="Common_Cancel"><value>Vazgeç</value></data>
-  <data name="Common_Save"><value>Kaydet</value></data>
-  <data name="Common_Saved"><value>Kaydedildi</value></data>
-  <data name="Common_Back"><value>Geri</value></data>
-  <data name="Common_From"><value>Başlangıç</value></data>
-  <data name="Common_To"><value>Bitiş</value></data>
-  <data name="Common_CreatedAt"><value>Oluşturulma</value></data>
-  <data name="Common_ApiUnavailable"><value>API şu anda erişilemez durumda.</value></data>
+  <data name="Nav_Dashboard" xml:space="preserve"><value>Panel</value></data>
+  <data name="Nav_Deliveries" xml:space="preserve"><value>Teslimatlar</value></data>
+  <data name="Nav_Drivers" xml:space="preserve"><value>Sürücüler</value></data>
+  <data name="Nav_Proofs" xml:space="preserve"><value>Teslimat Kanıtları</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Çıkış</value></data>
+  <data name="Nav_Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="Theme_Dark" xml:space="preserve"><value>Koyu tema</value></data>
+  <data name="Theme_Light" xml:space="preserve"><value>Açık tema</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Operasyon paneli girişi</value></data>
+  <data name="Login_Subtitle" xml:space="preserve"><value>Operasyon hesabınızla giriş yapın.</value></data>
+  <data name="Login_OpsOnly" xml:space="preserve"><value>Bu panel yalnızca operasyon kullanıcıları içindir.</value></data>
+  <data name="Login_Invalid" xml:space="preserve"><value>Telefon veya şifre hatalı.</value></data>
+  <data name="Login_Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Şifre</value></data>
+  <data name="Login_Submit" xml:space="preserve"><value>Giriş yap</value></data>
+  <data name="Login_DemoHint" xml:space="preserve"><value>Demo hesabı:</value></data>
+  <data name="Login_NoCompany" xml:space="preserve"><value>Firmanız yok mu?</value></data>
+  <data name="Login_SignUpLink" xml:space="preserve"><value>Firma kaydı oluşturun</value></data>
+  <data name="SignUp_Title" xml:space="preserve"><value>Firma kaydı</value></data>
+  <data name="SignUp_Lead" xml:space="preserve"><value>Firmanızı oluşturun, dakikalar içinde kullanmaya başlayın.</value></data>
+  <data name="SignUp_CompanyName" xml:space="preserve"><value>Firma adı</value></data>
+  <data name="SignUp_CompanyPlaceholder" xml:space="preserve"><value>Örn. Yıldız Nakliyat</value></data>
+  <data name="SignUp_AdminName" xml:space="preserve"><value>Adınız</value></data>
+  <data name="SignUp_AdminPlaceholder" xml:space="preserve"><value>Ad Soyad</value></data>
+  <data name="SignUp_Submit" xml:space="preserve"><value>Kaydı oluştur</value></data>
+  <data name="SignUp_HaveAccount" xml:space="preserve"><value>Zaten hesabınız var mı?</value></data>
+  <data name="SignUp_LoginLink" xml:space="preserve"><value>Giriş yapın</value></data>
+  <data name="Dashboard_Title" xml:space="preserve"><value>Genel bakış</value></data>
+  <data name="Dashboard_Pending" xml:space="preserve"><value>Bekleyen</value></data>
+  <data name="Dashboard_Delivered" xml:space="preserve"><value>Teslim edildi</value></data>
+  <data name="Dashboard_Failed" xml:space="preserve"><value>Teslim edilemedi</value></data>
+  <data name="Dashboard_Unassigned" xml:space="preserve"><value>Atanmamış</value></data>
+  <data name="Dashboard_Last7Days" xml:space="preserve"><value>Kanıtlar — son 7 gün</value></data>
+  <data name="Dashboard_PendingNote" xml:space="preserve"><value>Sürücüye atanmış, teslimat kanıtı bekliyor</value></data>
+  <data name="Dashboard_DeliveredNote" xml:space="preserve"><value>İmzalı kanıtla kapatıldı</value></data>
+  <data name="Dashboard_FailedNote" xml:space="preserve"><value>Teslim edilemeyen teslimatlar</value></data>
+  <data name="Dashboard_UnassignedNote" xml:space="preserve"><value>Henüz bir sürücüye yönlendirilmedi</value></data>
+  <data name="Dashboard_AsTable" xml:space="preserve"><value>Tablo olarak gör</value></data>
+  <data name="Dashboard_AsChart" xml:space="preserve"><value>Grafik olarak gör</value></data>
+  <data name="Deliveries_Title" xml:space="preserve"><value>Teslimatlar</value></data>
+  <data name="Deliveries_New" xml:space="preserve"><value>Yeni teslimat</value></data>
+  <data name="Deliveries_SearchHint" xml:space="preserve"><value>sipariş no veya alıcı</value></data>
+  <data name="Deliveries_Assign" xml:space="preserve"><value>Sürücü ata</value></data>
+  <data name="Deliveries_Assigned" xml:space="preserve"><value>Sürücü atandı</value></data>
+  <data name="Deliveries_Subtitle" xml:space="preserve"><value>Tüm teslimatlar ve durumları</value></data>
+  <data name="Deliveries_Empty" xml:space="preserve"><value>Teslimat bulunamadı.</value></data>
+  <data name="Delivery_OrderRef" xml:space="preserve"><value>Sipariş No</value></data>
+  <data name="Delivery_Recipient" xml:space="preserve"><value>Alıcı</value></data>
+  <data name="Delivery_Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Delivery_Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Delivery_Note" xml:space="preserve"><value>Not</value></data>
+  <data name="Delivery_HasProof" xml:space="preserve"><value>Kanıt</value></data>
+  <data name="Proofs_Title" xml:space="preserve"><value>Teslimat kanıtları</value></data>
+  <data name="Proofs_ExportExcel" xml:space="preserve"><value>Excel'e aktar</value></data>
+  <data name="Proofs_SearchHint" xml:space="preserve"><value>sipariş no</value></data>
+  <data name="Proofs_Subtitle" xml:space="preserve"><value>İmza ve fotoğraf kayıtları</value></data>
+  <data name="Proofs_Empty" xml:space="preserve"><value>Kanıt bulunamadı.</value></data>
+  <data name="Proof_Title" xml:space="preserve"><value>Kanıt</value></data>
+  <data name="Proof_DownloadPdf" xml:space="preserve"><value>PDF indir</value></data>
+  <data name="Proof_DeliveryInfo" xml:space="preserve"><value>Teslimat bilgileri</value></data>
+  <data name="Proof_SignedBy" xml:space="preserve"><value>İmzalayan</value></data>
+  <data name="Proof_FailureReason" xml:space="preserve"><value>Başarısızlık nedeni</value></data>
+  <data name="Proof_CapturedAt" xml:space="preserve"><value>Kayıt zamanı</value></data>
+  <data name="Proof_SyncedAt" xml:space="preserve"><value>Senkron zamanı</value></data>
+  <data name="Proof_OpenMap" xml:space="preserve"><value>haritada aç</value></data>
+  <data name="Proof_Signature" xml:space="preserve"><value>İmza</value></data>
+  <data name="Proof_Photos" xml:space="preserve"><value>Fotoğraflar</value></data>
+  <data name="Proof_NoPhotos" xml:space="preserve"><value>Fotoğraf yok.</value></data>
+  <data name="Proof_Location" xml:space="preserve"><value>Konum</value></data>
+  <data name="Proof_SubtitleFmt" xml:space="preserve"><value>{0} siparişi için teslimat kaydı</value></data>
+  <data name="Status_Pending" xml:space="preserve"><value>Bekliyor</value></data>
+  <data name="Status_Delivered" xml:space="preserve"><value>Teslim edildi</value></data>
+  <data name="Status_Failed" xml:space="preserve"><value>Teslim edilemedi</value></data>
+  <data name="Common_Search" xml:space="preserve"><value>Ara</value></data>
+  <data name="Common_Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Common_Driver" xml:space="preserve"><value>Sürücü</value></data>
+  <data name="Common_All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Common_Apply" xml:space="preserve"><value>Uygula</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Vazgeç</value></data>
+  <data name="Common_Save" xml:space="preserve"><value>Kaydet</value></data>
+  <data name="Common_Saved" xml:space="preserve"><value>Kaydedildi</value></data>
+  <data name="Common_Back" xml:space="preserve"><value>Geri</value></data>
+  <data name="Common_From" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Common_To" xml:space="preserve"><value>Bitiş</value></data>
+  <data name="Common_CreatedAt" xml:space="preserve"><value>Oluşturulma</value></data>
+  <data name="Common_ApiUnavailable" xml:space="preserve"><value>API şu anda erişilemez durumda.</value></data>
+  <data name="Common_Date" xml:space="preserve"><value>Tarih</value></data>
+  <data name="Common_Error" xml:space="preserve"><value>Bir hata oluştu.</value></data>
+  <data name="Common_RecordCount" xml:space="preserve"><value>{0} kayıt</value></data>
+  <data name="Common_Prev" xml:space="preserve"><value>Önceki</value></data>
+  <data name="Common_Next" xml:space="preserve"><value>Sonraki</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Kapat</value></data>
+  <data name="Drivers_Subtitle" xml:space="preserve"><value>Saha ekibindeki {0} sürücü</value></data>
+  <data name="Drivers_Add" xml:space="preserve"><value>Sürücü ekle</value></data>
+  <data name="Drivers_Name" xml:space="preserve"><value>Ad Soyad</value></data>
+  <data name="Drivers_NamePlaceholder" xml:space="preserve"><value>Örn. Kemal Aksoy</value></data>
+  <data name="Drivers_Empty" xml:space="preserve"><value>Henüz sürücü yok. "Sürücü ekle" ile başlayın.</value></data>
+  <data name="Drivers_Created" xml:space="preserve"><value>Sürücü oluşturuldu.</value></data>
+  <data name="Drivers_TempHint" xml:space="preserve"><value>Bu geçici şifreyi sürücüye iletin — ilk girişte değiştirmesi istenecek:</value></data>
+  <data name="Drivers_Create" xml:space="preserve"><value>Oluştur</value></data>
+  <data name="Drivers_Required" xml:space="preserve"><value>Ad ve telefon gerekli.</value></data>
 </root>

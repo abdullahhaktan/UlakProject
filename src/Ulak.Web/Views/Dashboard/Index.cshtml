@@ -1,64 +1,98 @@
 @using Ulak.Shared.Admin
 @model DashboardSummaryDto
 @{
-    ViewData["Title"] = L["Nav_Dashboard"].Value;
+    ViewData["Title"] = L["Dashboard_Title"].Value;
 }
 
-<h1 class="h3 mb-4">@L["Dashboard_Title"]</h1>
+<div class="page-head">
+    <div>
+        <h1>@L["Dashboard_Title"]</h1>
+        <p class="sub">@DateTime.Now.ToString("d MMMM yyyy")</p>
+    </div>
+</div>
 
 @if (Model is null)
 {
-    <div class="alert alert-warning">@L["Common_ApiUnavailable"]</div>
+    <div class="alert alert-warn">@L["Common_ApiUnavailable"]</div>
 }
 else
 {
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light"><div class="card-body">
-                <div class="text-muted small">@L["Dashboard_Pending"]</div>
-                <div class="display-6">@Model.PendingCount</div>
-            </div></div>
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <div class="stat-top">
+                <span class="stat-icon tone-neutral"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <span class="stat-label">@L["Dashboard_Pending"]</span>
+            </div>
+            <div class="stat-value tabular">@Model.PendingCount</div>
+            <p class="stat-note">@L["Dashboard_PendingNote"]</p>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light"><div class="card-body">
-                <div class="text-muted small">@L["Dashboard_Delivered"]</div>
-                <div class="display-6 text-success">@Model.DeliveredCount</div>
-            </div></div>
+        <div class="stat-tile">
+            <div class="stat-top">
+                <span class="stat-icon tone-ok"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5 9 17l11-11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="stat-label">@L["Dashboard_Delivered"]</span>
+            </div>
+            <div class="stat-value tabular tone-ok">@Model.DeliveredCount</div>
+            <p class="stat-note">@L["Dashboard_DeliveredNote"]</p>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light"><div class="card-body">
-                <div class="text-muted small">@L["Dashboard_Failed"]</div>
-                <div class="display-6 text-danger">@Model.FailedCount</div>
-            </div></div>
+        <div class="stat-tile">
+            <div class="stat-top">
+                <span class="stat-icon tone-danger"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="m9.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <span class="stat-label">@L["Dashboard_Failed"]</span>
+            </div>
+            <div class="stat-value tabular tone-danger">@Model.FailedCount</div>
+            <p class="stat-note">@L["Dashboard_FailedNote"]</p>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light"><div class="card-body">
-                <div class="text-muted small">@L["Dashboard_Unassigned"]</div>
-                <div class="display-6 text-warning">@Model.UnassignedCount</div>
-            </div></div>
+        <div class="stat-tile">
+            <div class="stat-top">
+                <span class="stat-icon tone-warn"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4 3 20h18L12 4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                <span class="stat-label">@L["Dashboard_Unassigned"]</span>
+            </div>
+            <div class="stat-value tabular tone-warn">@Model.UnassignedCount</div>
+            <p class="stat-note">@L["Dashboard_UnassignedNote"]</p>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">@L["Dashboard_Last7Days"]</div>
-        <div class="card-body">
-            <div id="trend-chart" style="height: 320px;"></div>
+    <div class="card chart-card">
+        <div class="card-head">
+            <h2>@L["Dashboard_Last7Days"]</h2>
+            <button class="link-btn" id="toggleTableBtn" type="button">@L["Dashboard_AsTable"]</button>
+        </div>
+        <div class="chart-wrap" id="chartWrap">
+            <svg id="chartSvg" viewBox="0 0 640 220" width="100%" height="220" role="img" aria-label="@L["Dashboard_Last7Days"]"></svg>
+            <div class="chart-tooltip"></div>
+        </div>
+        <table class="chart-table hidden" id="chartTable">
+            <thead><tr><th>@L["Common_Date"]</th><th>@L["Dashboard_Delivered"]</th><th>@L["Dashboard_Failed"]</th></tr></thead>
+            <tbody id="chartTableBody"></tbody>
+        </table>
+        <div class="legend">
+            <span class="legend-item"><span class="legend-dot ok"></span>@L["Dashboard_Delivered"]</span>
+            <span class="legend-item"><span class="legend-dot danger"></span>@L["Dashboard_Failed"]</span>
         </div>
     </div>
 
     @section Scripts {
         <script>
-            const trendData = @Html.Raw(Json.Serialize(Model.Last7Days));
-            $("#trend-chart").dxChart({
-                dataSource: trendData,
-                commonSeriesSettings: { argumentField: "day", type: "bar" },
-                series: [
-                    { valueField: "delivered", name: "@L["Dashboard_Delivered"]", color: "#198754" },
-                    { valueField: "failed", name: "@L["Dashboard_Failed"]", color: "#dc3545" }
-                ],
-                legend: { verticalAlignment: "bottom", horizontalAlignment: "center" },
-                tooltip: { enabled: true }
-            });
+            (function () {
+                var raw = @Html.Raw(Json.Serialize(Model.Last7Days));
+                var days = raw.map(function (p) { return { d: p.day, ok: p.delivered, fail: p.failed }; });
+                var text = { delivered: '@L["Dashboard_Delivered"]', failed: '@L["Dashboard_Failed"]' };
+                Ulak.drawBarChart(document.getElementById('chartSvg'), days, text);
+
+                var tbody = document.getElementById('chartTableBody');
+                tbody.innerHTML = days.map(function (d) {
+                    return '<tr><td>' + Ulak.esc(d.d) + '</td><td>' + d.ok + '</td><td>' + d.fail + '</td></tr>';
+                }).join('');
+
+                document.getElementById('toggleTableBtn').addEventListener('click', function () {
+                    var wrap = document.getElementById('chartWrap');
+                    var table = document.getElementById('chartTable');
+                    var showingTable = !table.classList.contains('hidden');
+                    wrap.classList.toggle('hidden', !showingTable);
+                    table.classList.toggle('hidden', showingTable);
+                    this.textContent = showingTable ? '@L["Dashboard_AsTable"]' : '@L["Dashboard_AsChart"]';
+                });
+            })();
         </script>
     }
 }

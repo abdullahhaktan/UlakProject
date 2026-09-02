@@ -1,100 +1,112 @@
 @{
-    ViewData["Title"] = L["Nav_Proofs"].Value;
+    ViewData["Title"] = L["Proofs_Title"].Value;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">@L["Proofs_Title"]</h1>
-    <a class="btn btn-outline-success" id="btn-export">@L["Proofs_ExportExcel"]</a>
+<div class="page-head">
+    <div>
+        <h1>@L["Proofs_Title"]</h1>
+        <p class="sub">@L["Proofs_Subtitle"]</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-outline" id="btn-export" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            @L["Proofs_ExportExcel"]
+        </button>
+    </div>
 </div>
 
-<div class="card mb-3"><div class="card-body">
-    <div class="row g-2 align-items-end">
-        <div class="col-md-3">
-            <label class="form-label small">@L["Common_Search"]</label>
-            <input type="text" id="f-search" class="form-control form-control-sm" placeholder="@L["Proofs_SearchHint"]" />
-        </div>
-        <div class="col-md-2">
-            <label class="form-label small">@L["Common_Status"]</label>
-            <select id="f-status" class="form-select form-select-sm">
-                <option value="">@L["Common_All"]</option>
-                <option value="Delivered">@L["Status_Delivered"]</option>
-                <option value="Failed">@L["Status_Failed"]</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label small">@L["Common_Driver"]</label>
-            <select id="f-driver" class="form-select form-select-sm"><option value="">@L["Common_All"]</option></select>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label small">@L["Common_From"]</label>
-            <input type="date" id="f-from" class="form-control form-control-sm" />
-        </div>
-        <div class="col-md-2">
-            <label class="form-label small">@L["Common_To"]</label>
-            <input type="date" id="f-to" class="form-control form-control-sm" />
-        </div>
-        <div class="col-md-1">
-            <button class="btn btn-sm btn-outline-secondary w-100" id="btn-filter">@L["Common_Apply"]</button>
-        </div>
-    </div>
-</div></div>
+<div class="filter-bar">
+    <label class="field grow"><span>@L["Common_Search"]</span><input type="text" id="f-search" placeholder="@L["Proofs_SearchHint"]" /></label>
+    <label class="field"><span>@L["Common_Status"]</span>
+        <select id="f-status">
+            <option value="">@L["Common_All"]</option>
+            <option value="Delivered">@L["Status_Delivered"]</option>
+            <option value="Failed">@L["Status_Failed"]</option>
+        </select>
+    </label>
+    <label class="field"><span>@L["Common_Driver"]</span>
+        <select id="f-driver"><option value="">@L["Common_All"]</option></select>
+    </label>
+    <label class="field field-date"><span>@L["Common_From"]</span><input type="date" id="f-from" /></label>
+    <label class="field field-date"><span>@L["Common_To"]</span><input type="date" id="f-to" /></label>
+    <button class="btn btn-outline" id="btn-filter" type="button">@L["Common_Apply"]</button>
+</div>
 
-<div id="grid"></div>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="data">
+            <thead><tr>
+                <th>@L["Delivery_OrderRef"]</th><th>@L["Delivery_Recipient"]</th><th>@L["Common_Status"]</th>
+                <th>@L["Common_Driver"]</th><th>@L["Proof_Photos"]</th><th>@L["Proof_CapturedAt"]</th><th>@L["Proof_SyncedAt"]</th>
+            </tr></thead>
+            <tbody id="proofsBody"></tbody>
+        </table>
+    </div>
+    <div class="table-foot">
+        <span class="count"></span>
+        <div class="pager"></div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        function filters() {
-            return {
-                search: $("#f-search").val() || null,
-                status: $("#f-status").val() || null,
-                driverId: $("#f-driver").val() || null,
-                from: $("#f-from").val() || null,
-                to: $("#f-to").val() || null
-            };
-        }
+        (function () {
+            var statusText = { Delivered: '@L["Status_Delivered"]', Failed: '@L["Status_Failed"]' };
+            var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="m5 13 5 5 9-11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            var cameraSvg = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 8h3l2-2h6l2 2h3v11H4V8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>';
 
-        const store = new DevExpress.data.CustomStore({
-            key: "id",
-            load(opts) {
-                const sort = (opts.sort && opts.sort[0]) || { selector: "capturedAtUtc", desc: true };
-                return $.getJSON("@Url.Action("Data", "Proofs")", $.extend(filters(), {
-                    skip: opts.skip || 0, take: opts.take || 20,
-                    sort: sort.selector, desc: !!sort.desc
-                })).then(r => ({ data: r.data, totalCount: r.totalCount }));
+            function filters() {
+                return {
+                    search: document.getElementById('f-search').value || null,
+                    status: document.getElementById('f-status').value || null,
+                    driverId: document.getElementById('f-driver').value || null,
+                    from: document.getElementById('f-from').value || null,
+                    to: document.getElementById('f-to').value || null
+                };
             }
-        });
 
-        const grid = $("#grid").dxDataGrid({
-            dataSource: store,
-            remoteOperations: { paging: true, sorting: true },
-            columnAutoWidth: true, showBorders: true, hoverStateEnabled: true,
-            paging: { pageSize: 20 }, pager: { visible: true, showInfo: true, showNavigationButtons: true },
-            onRowClick(e) { if (e.rowType === "data") window.location = "@Url.Action("Detail", "Proofs")/" + e.data.id; },
-            columns: [
-                { dataField: "orderRef", caption: "@L["Delivery_OrderRef"]" },
-                { dataField: "recipientName", caption: "@L["Delivery_Recipient"]" },
-                { dataField: "status", caption: "@L["Common_Status"]", width: 110,
-                  cellTemplate(c, o) {
-                      const cls = o.value === "Delivered" ? "success" : "danger";
-                      c.append(`<span class="badge text-bg-${cls}">${o.value}</span>`);
-                  } },
-                { dataField: "failureReason", caption: "@L["Proof_FailureReason"]" },
-                { dataField: "driverName", caption: "@L["Common_Driver"]" },
-                { dataField: "photoCount", caption: "@L["Proof_Photos"]", width: 80, alignment: "center" },
-                { dataField: "capturedAtUtc", caption: "@L["Proof_CapturedAt"]", dataType: "datetime", width: 160 },
-                { dataField: "syncedAtUtc", caption: "@L["Proof_SyncedAt"]", dataType: "datetime", width: 160 }
-            ]
-        }).dxDataGrid("instance");
+            function fmt(v) { var d = new Date(v); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 
-        $("#btn-filter").on("click", () => grid.refresh());
-        $("#f-search").on("keydown", e => { if (e.key === "Enter") grid.refresh(); });
-        $("#btn-export").on("click", () => {
-            const q = $.param(Object.fromEntries(Object.entries(filters()).filter(([, v]) => v)));
-            window.location = "@Url.Action("Export", "Proofs")" + (q ? "?" + q : "");
-        });
+            function renderRow(r) {
+                var ok = r.status === 'Delivered';
+                return '<tr>' +
+                    '<td class="cell-mono">' + Ulak.esc(r.orderRef) + '</td>' +
+                    '<td class="cell-primary">' + Ulak.esc(r.recipientName) + '</td>' +
+                    '<td><span class="pill ' + (ok ? 'ok' : 'danger') + '"' + (r.failureReason ? ' title="' + Ulak.esc(r.failureReason) + '"' : '') + '>' +
+                        (ok ? checkSvg : '') + Ulak.esc(statusText[r.status] || r.status) + '</span></td>' +
+                    '<td>' + Ulak.esc(r.driverName) + '</td>' +
+                    '<td><span class="pill pending">' + cameraSvg + (r.photoCount || 0) + '</span></td>' +
+                    '<td class="cell-mono">' + fmt(r.capturedAtUtc) + '</td>' +
+                    '<td class="cell-mono">' + fmt(r.syncedAtUtc) + '</td>' +
+                    '</tr>';
+            }
 
-        $.getJSON("@Url.Action("Drivers", "Proofs")").done(list => {
-            $("#f-driver").append(list.map(d => `<option value="${d.id}">${d.name}</option>`).join(""));
-        });
+            var table = Ulak.dataTable({
+                body: '#proofsBody', foot: '.table-foot',
+                url: '@Url.Action("Data", "Proofs")',
+                sort: 'CapturedAtUtc', desc: true, colspan: 7,
+                filters: filters, render: renderRow,
+                onRowClick: function (r) { window.location = '@Url.Action("Detail", "Proofs")/' + r.id; },
+                text: {
+                    empty: '@L["Proofs_Empty"]', error: '@L["Common_Error"]',
+                    records: '@L["Common_RecordCount"]', prev: '@L["Common_Prev"]', next: '@L["Common_Next"]'
+                }
+            });
+
+            document.getElementById('btn-filter').addEventListener('click', function () { table.refresh(); });
+            document.getElementById('f-search').addEventListener('keydown', function (e) { if (e.key === 'Enter') table.refresh(); });
+            document.getElementById('btn-export').addEventListener('click', function () {
+                var f = filters();
+                var q = Object.keys(f).filter(function (k) { return f[k]; })
+                    .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(f[k]); }).join('&');
+                window.location = '@Url.Action("Export", "Proofs")' + (q ? '?' + q : '');
+            });
+
+            jQuery.getJSON('@Url.Action("Drivers", "Proofs")').done(function (list) {
+                jQuery('#f-driver').append((list || []).map(function (d) {
+                    return '<option value="' + d.id + '">' + Ulak.esc(d.name) + '</option>';
+                }).join(''));
+            });
+        })();
     </script>
 }

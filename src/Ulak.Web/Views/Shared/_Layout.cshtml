@@ -1,59 +1,72 @@
 @using System.Globalization
 @{
     var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-    var otherCulture = culture == "tr" ? "en" : "tr";
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var activeController = (ViewContext.RouteData.Values["controller"] as string) ?? "";
+    string? NavClass(string c) => string.Equals(activeController, c, StringComparison.OrdinalIgnoreCase) ? "page" : null;
+    var userName = User.Identity?.Name ?? "";
+    var initials = string.Concat(userName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Take(2).Select(p => char.ToUpperInvariant(p[0])));
+    if (string.IsNullOrEmpty(initials)) initials = "•";
 }
 <!DOCTYPE html>
 <html lang="@culture">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] · Ulak</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/devextreme/css/dx.common.css" />
-    <link rel="stylesheet" href="~/lib/devextreme/css/dx.light.css" id="dx-theme" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"] · Ulak POD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="~/css/ulak.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/devextreme/js/dx.all.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index">Ulak <span class="fw-light">POD</span></a>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-                <span class="navbar-toggler-icon"></span>
+@Html.AntiForgeryToken()
+@{
+    var mark = "<svg class=\"mark\" viewBox=\"0 0 24 24\" fill=\"none\"><path d=\"M4 8.5 12 4l8 4.5v7L12 20l-8-4.5v-7Z\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/><path d=\"M4 8.5 12 13l8-4.5M12 13v7\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"/></svg>";
+}
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <header class="appbar">
+        <a class="appbar-brand" asp-controller="Dashboard" asp-action="Index" style="text-decoration:none">
+            @Html.Raw(mark)<span class="word">Ulak</span><span class="pod">POD</span>
+        </a>
+        <nav class="appbar-nav">
+            <a class="navlink" aria-current="@NavClass("Dashboard")" asp-controller="Dashboard" asp-action="Index">@L["Nav_Dashboard"]</a>
+            <a class="navlink" aria-current="@NavClass("Deliveries")" asp-controller="Deliveries" asp-action="Index">@L["Nav_Deliveries"]</a>
+            <a class="navlink" aria-current="@NavClass("Drivers")" asp-controller="Drivers" asp-action="Index">@L["Nav_Drivers"]</a>
+            <a class="navlink" aria-current="@NavClass("Proofs")" asp-controller="Proofs" asp-action="Index">@L["Nav_Proofs"]</a>
+        </nav>
+        <div class="appbar-user">
+            <select class="lang-pill" onchange="location.href=this.value" aria-label="@L["Nav_Language"]">
+                @foreach (var c in new[] { "tr", "en", "es" })
+                {
+                    var url = Url.Action("SetLanguage", "Account", new { culture = c, returnUrl });
+                    <option value="@url" selected="@(culture == c)">@c.ToUpperInvariant()</option>
+                }
+            </select>
+            <button id="themeToggle" type="button" class="btn btn-ghost btn-sm"
+                    data-label-dark="@L["Theme_Dark"]" data-label-light="@L["Theme_Light"]" aria-label="@L["Theme_Dark"]">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
             </button>
-            <div class="collapse navbar-collapse" id="nav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" asp-controller="Dashboard" asp-action="Index">@L["Nav_Dashboard"]</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Deliveries" asp-action="Index">@L["Nav_Deliveries"]</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Drivers" asp-action="Index">Sürücüler</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Proofs" asp-action="Index">@L["Nav_Proofs"]</a></li>
-                </ul>
-                <div class="d-flex align-items-center gap-3">
-                    <a class="text-white-50 text-decoration-none small"
-                       asp-controller="Account" asp-action="SetLanguage"
-                       asp-route-culture="@otherCulture" asp-route-returnUrl="@returnUrl">@otherCulture.ToUpperInvariant()</a>
-                    <span class="text-white-50 small">@User.Identity!.Name</span>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-outline-light">@L["Nav_Logout"]</button>
-                    </form>
-                </div>
-            </div>
-        }
-    </div>
-</nav>
-
-<main class="container-fluid py-4">
+            <span class="user-chip"><span class="avatar">@initials</span>@userName</span>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-ghost btn-sm">@L["Nav_Logout"]</button>
+            </form>
+        </div>
+    </header>
+    <main class="stage">
+        @RenderBody()
+    </main>
+}
+else
+{
     @RenderBody()
-</main>
+}
 
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
