@@ -19,7 +19,7 @@
     <div>
         <h1>@L["Proof_Title"] #@Model.Id
             <span class="pill @(isPickup ? "pending" : "ok")" style="vertical-align:middle">@typeLabel</span>
-            <span class="pill @(failed ? "danger" : "ok")" style="vertical-align:middle">@statusLabel</span>
+            <span class="pill @(failed ? "danger" : isPickup ? "warn" : "ok")" style="vertical-align:middle">@statusLabel</span>
         </h1>
         <p class="sub">@string.Format(L["Proof_SubtitleFmt"].Value, Model.OrderRef)</p>
     </div>
