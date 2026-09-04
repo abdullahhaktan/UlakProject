@@ -57,6 +57,12 @@ public sealed class UpdateDriverRequestValidator : AbstractValidator<UpdateDrive
     }
 }
 
+public sealed class UpdateCompanySettingsRequestValidator : AbstractValidator<UpdateCompanySettingsRequest>
+{
+    public UpdateCompanySettingsRequestValidator() =>
+        RuleFor(x => x.DisplayName).NotEmpty().MaximumLength(200);
+}
+
 public sealed class RefreshRequestValidator : AbstractValidator<RefreshRequest>
 {
     public RefreshRequestValidator() => RuleFor(x => x.RefreshToken).NotEmpty();

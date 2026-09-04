@@ -26,10 +26,14 @@ public sealed class SqlErrorExceptionHandler : IExceptionHandler
         [50025] = StatusCodes.Status409Conflict,   // pickup proof required first
         [50026] = StatusCodes.Status400BadRequest, // invalid proof type / status
         [50027] = StatusCodes.Status409Conflict,   // delivery in wrong state for this proof
+        [50028] = StatusCodes.Status422UnprocessableEntity, // photo required by company settings
+        [50029] = StatusCodes.Status422UnprocessableEntity, // signature required by company settings
         [50030] = StatusCodes.Status409Conflict,   // sign-up phone already registered
         [50031] = StatusCodes.Status409Conflict,   // create-driver phone already registered
         [50032] = StatusCodes.Status409Conflict,   // update-driver phone already registered
         [50033] = StatusCodes.Status404NotFound,   // driver not found in this company
+        [50034] = StatusCodes.Status404NotFound,   // company settings not found
+        [50035] = StatusCodes.Status400BadRequest, // display name required
     };
 
     private readonly ILogger<SqlErrorExceptionHandler> _logger;
@@ -68,6 +72,7 @@ public sealed class SqlErrorExceptionHandler : IExceptionHandler
             403 => "Forbidden",
             404 => "Not Found",
             409 => "Conflict",
+            422 => "Unprocessable Entity",
             _ => "Error",
         };
     }
