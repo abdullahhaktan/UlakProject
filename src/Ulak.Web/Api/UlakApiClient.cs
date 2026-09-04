@@ -80,6 +80,16 @@ public sealed class UlakApiClient
     public Task<DashboardSummaryDto?> GetDashboardAsync(CancellationToken ct) =>
         _http.GetFromJsonAsync<DashboardSummaryDto>("admin/dashboard", ct);
 
+    public Task<CompanyConfigDto?> GetSettingsAsync(CancellationToken ct) =>
+        _http.GetFromJsonAsync<CompanyConfigDto>("admin/settings", ct);
+
+    public async Task<CompanyConfigDto> UpdateSettingsAsync(UpdateCompanySettingsRequest request, CancellationToken ct)
+    {
+        var response = await _http.PutAsJsonAsync("admin/settings", request, ct);
+        await ThrowIfProblem(response);
+        return (await response.Content.ReadFromJsonAsync<CompanyConfigDto>(cancellationToken: ct))!;
+    }
+
     public Task<PagedProofs?> GetProofsAsync(GridQuery query, CancellationToken ct) =>
         _http.GetFromJsonAsync<PagedProofs>("admin/proofs" + ToQueryString(query, "CapturedAtUtc"), ct);
 

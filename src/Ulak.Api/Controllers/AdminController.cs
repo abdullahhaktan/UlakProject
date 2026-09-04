@@ -22,6 +22,7 @@ public sealed class AdminController : ControllerBase
     private readonly IDeliveryRepository _deliveries;
     private readonly IUserRepository _users;
     private readonly IDashboardRepository _dashboard;
+    private readonly ICompanyRepository _companies;
     private readonly IPasswordHasher _passwordHasher;
     private readonly ICurrentUser _currentUser;
     private readonly ISmsSender _sms;
@@ -30,12 +31,13 @@ public sealed class AdminController : ControllerBase
 
     public AdminController(
         IDeliveryRepository deliveries, IUserRepository users, IDashboardRepository dashboard,
-        IPasswordHasher passwordHasher, ICurrentUser currentUser,
+        ICompanyRepository companies, IPasswordHasher passwordHasher, ICurrentUser currentUser,
         ISmsSender sms, IOptions<SmsOptions> smsOptions, ILogger<AdminController> logger)
     {
         _deliveries = deliveries;
         _users = users;
         _dashboard = dashboard;
+        _companies = companies;
         _passwordHasher = passwordHasher;
         _currentUser = currentUser;
         _sms = sms;
@@ -130,6 +132,31 @@ public sealed class AdminController : ControllerBase
         await _users.SetDriverActiveAsync(_currentUser.CompanyId, id, request.IsActive, ct);
         return NoContent();
     }
+
+    [HttpGet("settings")]
+    [ProducesResponseType<Dto.CompanyConfigDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSettings(CancellationToken ct)
+    {
+        var s = await _companies.GetSettingsAsync(_currentUser.CompanyId, ct);
+        return s is null ? NotFound() : Ok(ToConfigDto(s));
+    }
+
+    [HttpPut("settings")]
+    [ProducesResponseType<Dto.CompanyConfigDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSettings(
+        [FromBody] Dto.UpdateCompanySettingsRequest request, CancellationToken ct)
+    {
+        var saved = await _companies.UpdateSettingsAsync(
+            _currentUser.CompanyId, request.DisplayName.Trim(),
+            request.RequirePhoto, request.RequireSignature, ct);
+        return Ok(ToConfigDto(saved));
+    }
+
+    private static Dto.CompanyConfigDto ToConfigDto(Ulak.Core.Domain.CompanySettings s) =>
+        new(s.CompanyId, s.DisplayName, s.PricingModel, s.FlatRate, s.PerKmRate,
+            s.Currency, s.RequirePhoto, s.RequireSignature, LogoUrl: null);
 
     [HttpGet("dashboard")]
     [ProducesResponseType<Dto.DashboardSummaryDto>(StatusCodes.Status200OK)]

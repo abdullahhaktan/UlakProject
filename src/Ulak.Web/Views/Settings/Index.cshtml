@@ -1,0 +1,61 @@
+@model SettingsViewModel
+@{
+    ViewData["Title"] = L["Settings_Title"].Value;
+}
+
+<div class="page-head">
+    <div>
+        <h1>@L["Settings_Title"]</h1>
+        <p class="sub">@L["Settings_Subtitle"]</p>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="detail-stack">
+        <div class="card">
+            <div class="card-head"><h2>@L["Settings_CompanyCard"]</h2></div>
+            <div class="card-body">
+                @if (Model.Saved)
+                {
+                    <div class="alert alert-ok">@L["Settings_Saved"]</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-danger">@Model.Error</div>
+                }
+
+                <form asp-action="Index" method="post">
+                    <label class="field-block">
+                        <span>@L["Settings_DisplayName"]</span>
+                        <input asp-for="DisplayName" />
+                        <span asp-validation-for="DisplayName" class="field-error"></span>
+                    </label>
+
+                    <label class="check-row">
+                        <input asp-for="RequirePhoto" type="checkbox" />
+                        <span class="check-text">
+                            <strong>@L["Settings_RequirePhoto"]</strong>
+                            <span>@L["Settings_RequirePhotoHint"]</span>
+                        </span>
+                    </label>
+
+                    <label class="check-row">
+                        <input asp-for="RequireSignature" type="checkbox" />
+                        <span class="check-text">
+                            <strong>@L["Settings_RequireSignature"]</strong>
+                            <span>@L["Settings_RequireSignatureHint"]</span>
+                        </span>
+                    </label>
+
+                    <div style="margin-top:16px">
+                        <button type="submit" class="btn btn-primary">@L["Common_Save"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

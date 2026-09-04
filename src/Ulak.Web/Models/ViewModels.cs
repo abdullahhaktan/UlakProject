@@ -50,6 +50,22 @@ public sealed class DriversViewModel
     public bool ShowInactive { get; init; }
 }
 
+public sealed class SettingsViewModel
+{
+    [Required]
+    [StringLength(200)]
+    [Display(Name = "DisplayName")]
+    public string DisplayName { get; set; } = string.Empty;
+
+    public bool RequirePhoto { get; set; }
+
+    public bool RequireSignature { get; set; }
+
+    public bool Saved { get; set; }
+
+    public string? Error { get; set; }
+}
+
 public sealed class ErrorViewModel
 {
     public string? RequestId { get; set; }

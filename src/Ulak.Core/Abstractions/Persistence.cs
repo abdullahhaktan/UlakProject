@@ -37,6 +37,10 @@ public sealed record DriverLookup(int Id, string Name, string Phone, bool IsActi
 public interface ICompanyRepository
 {
     Task<CompanySettings?> GetSettingsAsync(int companyId, CancellationToken ct);
+
+    /// <summary>Admin updates the display name + capture requirements. Returns the saved settings.</summary>
+    Task<CompanySettings> UpdateSettingsAsync(
+        int companyId, string displayName, bool requirePhoto, bool requireSignature, CancellationToken ct);
 }
 
 public interface IRefreshTokenRepository

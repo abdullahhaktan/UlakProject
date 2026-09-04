@@ -93,6 +93,23 @@ public sealed class CompanyRepository : ICompanyRepository
             "dbo.usp_Company_GetSettings", new { CompanyId = companyId }, ct);
         return rows.SingleOrDefault();
     }
+
+    public async Task<CompanySettings> UpdateSettingsAsync(
+        int companyId, string displayName, bool requirePhoto, bool requireSignature, CancellationToken ct)
+    {
+        using var connection = _factory.Create();
+        var rows = await connection.QueryProcAsync<CompanySettings>(
+            "dbo.usp_Company_UpdateSettings",
+            new
+            {
+                CompanyId = companyId,
+                DisplayName = displayName,
+                RequirePhoto = requirePhoto,
+                RequireSignature = requireSignature,
+            },
+            ct);
+        return rows.Single();
+    }
 }
 
 public sealed class RefreshTokenRepository : IRefreshTokenRepository

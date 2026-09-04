@@ -27,6 +27,10 @@ public sealed record SetDriverActiveRequest(bool IsActive);
 /// <summary>The temp password is returned exactly once; the driver must change it on first login.</summary>
 public sealed record CreateDriverResponse(int Id, string Name, string Phone, string TempPassword);
 
+/// <summary>Admin edits the company's display name + capture requirements.</summary>
+public sealed record UpdateCompanySettingsRequest(
+    string DisplayName, bool RequirePhoto, bool RequireSignature);
+
 public sealed record CompanyConfigDto(
     int CompanyId,
     string DisplayName,

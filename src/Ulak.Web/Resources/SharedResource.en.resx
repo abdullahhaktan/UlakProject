@@ -55,6 +55,16 @@
   <data name="Nav_Deliveries" xml:space="preserve"><value>Deliveries</value></data>
   <data name="Nav_Drivers" xml:space="preserve"><value>Drivers</value></data>
   <data name="Nav_Proofs" xml:space="preserve"><value>Proofs</value></data>
+  <data name="Nav_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Settings_Title" xml:space="preserve"><value>Settings</value></data>
+  <data name="Settings_Subtitle" xml:space="preserve"><value>Company details and proof rules</value></data>
+  <data name="Settings_CompanyCard" xml:space="preserve"><value>Company</value></data>
+  <data name="Settings_DisplayName" xml:space="preserve"><value>Display name</value></data>
+  <data name="Settings_RequirePhoto" xml:space="preserve"><value>Photo required</value></data>
+  <data name="Settings_RequirePhotoHint" xml:space="preserve"><value>A driver cannot submit a proof without at least one photo (failed deliveries are exempt).</value></data>
+  <data name="Settings_RequireSignature" xml:space="preserve"><value>Signature required</value></data>
+  <data name="Settings_RequireSignatureHint" xml:space="preserve"><value>A recipient signature is required on the delivery proof (failed deliveries are exempt).</value></data>
+  <data name="Settings_Saved" xml:space="preserve"><value>Settings saved.</value></data>
   <data name="Nav_Logout" xml:space="preserve"><value>Sign out</value></data>
   <data name="Nav_Language" xml:space="preserve"><value>Language</value></data>
   <data name="Theme_Dark" xml:space="preserve"><value>Dark theme</value></data>
