@@ -1,5 +1,6 @@
 using Ulak.Core.Abstractions;
 using Ulak.Infrastructure.Documents;
+using Ulak.Infrastructure.Messaging;
 using Ulak.Infrastructure.Persistence;
 using Ulak.Infrastructure.Security;
 using Ulak.Infrastructure.Storage;
@@ -33,12 +34,18 @@ public static class DependencyInjection
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        services.AddOptions<SmsOptions>()
+            .Bind(configuration.GetSection(SmsOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
         QuestPDF.Settings.License = LicenseType.Community;
 
         services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IObjectStorage, MinioObjectStorage>();
+        services.AddSingleton<ISmsSender, LoggingSmsSender>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();

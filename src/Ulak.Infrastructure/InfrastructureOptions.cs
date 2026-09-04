@@ -28,6 +28,18 @@ public sealed class JwtOptions
     public int RefreshTokenDays { get; set; } = 30;
 }
 
+public sealed class SmsOptions
+{
+    public const string SectionName = "Sms";
+
+    /// <summary>When false, <see cref="Ulak.Core.Abstractions.ISmsSender"/> is a no-op (still logged).</summary>
+    public bool Enabled { get; set; } = true;
+
+    /// <summary>Link put in the driver-invite SMS so the driver can install the app.</summary>
+    [Required]
+    public string AppDownloadUrl { get; set; } = "https://ulak.app";
+}
+
 public sealed class StorageOptions
 {
     public const string SectionName = "Storage";

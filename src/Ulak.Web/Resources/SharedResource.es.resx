@@ -153,7 +153,7 @@
   <data name="Drivers_NamePlaceholder" xml:space="preserve"><value>Ej. Kemal Aksoy</value></data>
   <data name="Drivers_Empty" xml:space="preserve"><value>Aún no hay conductores. Empieza con "Añadir conductor".</value></data>
   <data name="Drivers_Created" xml:space="preserve"><value>Conductor creado.</value></data>
-  <data name="Drivers_TempHint" xml:space="preserve"><value>Comparte esta contraseña temporal con el conductor — se le pedirá cambiarla en el primer inicio de sesión:</value></data>
+  <data name="Drivers_TempHint" xml:space="preserve"><value>La contraseña temporal se envió al conductor por SMS. También puedes compartirla como respaldo — se le pedirá cambiarla en el primer inicio de sesión:</value></data>
   <data name="Drivers_Create" xml:space="preserve"><value>Crear</value></data>
   <data name="Drivers_Required" xml:space="preserve"><value>El nombre y el teléfono son obligatorios.</value></data>
   <data name="Drivers_Status" xml:space="preserve"><value>Estado</value></data>
