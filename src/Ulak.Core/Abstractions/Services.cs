@@ -35,6 +35,12 @@ public interface IObjectStorage
 
 public sealed record PresignedUpload(string UploadUrl, string PublicUrl, string ObjectKey, int ExpiresInSeconds);
 
+public interface ISmsSender
+{
+    /// <summary>Best-effort transactional SMS (driver invite, etc.). Implementations must not throw for a delivery failure.</summary>
+    Task SendAsync(string toPhone, string body, CancellationToken ct);
+}
+
 public interface IProofDocumentService
 {
     /// <summary>One-page PDF: delivery info + photos + signature + GPS + timestamps.</summary>

@@ -3,8 +3,10 @@ using System.Security.Cryptography;
 using Ulak.Api.Auth;
 using Ulak.Core.Abstractions;
 using Ulak.Core.Domain;
+using Ulak.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Dto = Ulak.Shared.Admin;
 
 namespace Ulak.Api.Controllers;
@@ -22,16 +24,23 @@ public sealed class AdminController : ControllerBase
     private readonly IDashboardRepository _dashboard;
     private readonly IPasswordHasher _passwordHasher;
     private readonly ICurrentUser _currentUser;
+    private readonly ISmsSender _sms;
+    private readonly SmsOptions _smsOptions;
+    private readonly ILogger<AdminController> _logger;
 
     public AdminController(
         IDeliveryRepository deliveries, IUserRepository users, IDashboardRepository dashboard,
-        IPasswordHasher passwordHasher, ICurrentUser currentUser)
+        IPasswordHasher passwordHasher, ICurrentUser currentUser,
+        ISmsSender sms, IOptions<SmsOptions> smsOptions, ILogger<AdminController> logger)
     {
         _deliveries = deliveries;
         _users = users;
         _dashboard = dashboard;
         _passwordHasher = passwordHasher;
         _currentUser = currentUser;
+        _sms = sms;
+        _smsOptions = smsOptions.Value;
+        _logger = logger;
     }
 
     [HttpGet("deliveries")]
@@ -91,6 +100,8 @@ public sealed class AdminController : ControllerBase
             _passwordHasher.Hash(tempPassword),
             ct);
 
+        await SendInviteSmsAsync(driver.Phone, tempPassword, ct);
+
         return CreatedAtAction(nameof(Drivers), null,
             new Dto.CreateDriverResponse(driver.Id, driver.Name, driver.Phone, tempPassword));
     }
@@ -131,6 +142,24 @@ public sealed class AdminController : ControllerBase
                 .Select(p => new Dto.DashboardTrendPointDto(
                     p.Day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), p.Delivered, p.Failed))
                 .ToList()));
+    }
+
+    /// <summary>Best-effort invite SMS. A send failure never fails driver creation —
+    /// the admin still gets the temp password in the response as a fallback.</summary>
+    private async Task SendInviteSmsAsync(string phone, string tempPassword, CancellationToken ct)
+    {
+        var body =
+            $"Ulak surucu hesabiniz olusturuldu. Gecici sifre: {tempPassword} " +
+            $"Uygulama: {_smsOptions.AppDownloadUrl} Ilk giriste sifrenizi degistireceksiniz.";
+
+        try
+        {
+            await _sms.SendAsync(phone, body, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Driver invite SMS to {Phone} failed", phone);
+        }
     }
 
     private static string GenerateTempPassword()

@@ -67,6 +67,19 @@ public sealed class TenantFlowTests
     }
 
     [Fact]
+    public async Task Creating_a_driver_sends_an_invite_sms_with_the_temp_password()
+    {
+        var admin = await AuthedClientAsync(DemoAdmin, AdminPassword);
+        var phone = $"+90555{Random.Shared.Next(1_000_000, 9_999_999)}";
+
+        var created = await admin.PostAsJsonAsync("/admin/drivers", new CreateDriverRequest("SMS Surucu", phone));
+        var body = await created.Content.ReadFromJsonAsync<CreateDriverResponse>();
+
+        var sms = _factory.Sms.Sent.Single(m => m.Phone == phone);
+        sms.Body.ShouldContain(body!.TempPassword);
+    }
+
+    [Fact]
     public async Task An_admin_only_sees_their_own_companys_deliveries()
     {
         var demo = await AuthedClientAsync(DemoAdmin, AdminPassword);

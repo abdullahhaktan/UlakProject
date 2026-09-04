@@ -1,10 +1,27 @@
+using System.Collections.Concurrent;
+using Ulak.Core.Abstractions;
 using Ulak.DbMigrator;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 
 namespace Ulak.IntegrationTests;
+
+/// <summary>Captures every SMS the API tries to send so tests can assert on it.</summary>
+public sealed class FakeSmsSender : ISmsSender
+{
+    public ConcurrentQueue<(string Phone, string Body)> Sent { get; } = new();
+
+    public Task SendAsync(string toPhone, string body, CancellationToken ct)
+    {
+        Sent.Enqueue((toPhone, body));
+        return Task.CompletedTask;
+    }
+}
 
 /// <summary>
 /// Boots the real API against a throwaway SQL Server container with the
@@ -16,6 +33,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest").Build();
 
     private string _connectionString = string.Empty;
+
+    public FakeSmsSender Sms { get; } = new();
 
     public async Task InitializeAsync()
     {
@@ -46,6 +65,12 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseSetting("Storage:AccessKey", "integration");
         builder.UseSetting("Storage:SecretKey", "integration-secret");
         builder.UseSetting("Storage:Bucket", "proofs");
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<ISmsSender>();
+            services.AddSingleton<ISmsSender>(Sms);
+        });
     }
 
     public new async Task DisposeAsync()

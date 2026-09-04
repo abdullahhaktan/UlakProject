@@ -153,7 +153,7 @@
   <data name="Drivers_NamePlaceholder" xml:space="preserve"><value>Örn. Kemal Aksoy</value></data>
   <data name="Drivers_Empty" xml:space="preserve"><value>Henüz sürücü yok. "Sürücü ekle" ile başlayın.</value></data>
   <data name="Drivers_Created" xml:space="preserve"><value>Sürücü oluşturuldu.</value></data>
-  <data name="Drivers_TempHint" xml:space="preserve"><value>Bu geçici şifreyi sürücüye iletin — ilk girişte değiştirmesi istenecek:</value></data>
+  <data name="Drivers_TempHint" xml:space="preserve"><value>Geçici şifre sürücüye SMS ile gönderildi. Yedek olarak siz de iletebilirsiniz — ilk girişte değiştirmesi istenecek:</value></data>
   <data name="Drivers_Create" xml:space="preserve"><value>Oluştur</value></data>
   <data name="Drivers_Required" xml:space="preserve"><value>Ad ve telefon gerekli.</value></data>
   <data name="Drivers_Status" xml:space="preserve"><value>Durum</value></data>
